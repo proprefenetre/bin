@@ -1,0 +1,17 @@
+#!/bin/bash
+
+
+# strict mode:
+set -e
+set -u
+set -o pipefail
+
+# activating a pyenv
+python_dir="$HOME/projects/python/" 
+
+if [[ -d $python_dir/$1 ]]; then
+    source $python_dir/$1/bin/activate && cd $python_dir/$1
+else
+    echo "not a virtual environment"
+fi
+

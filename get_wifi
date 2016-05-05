@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+set -e
+set -u
+set -o pipefail
+
+wf_menu() {
+    wf_interface=$(iw dev | grep Interface | awk '{print $3}')
+    sudo wifi-menu $wf_interface
+}

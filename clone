@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# see http://redsymbol.net/articles/unofficial-bash-strict-mode/
+set -e
+set -u
+set -o pipefail
+
+clone() {
+    case $1 in
+        -g ) git clone https://github.com/$2
+            ;;
+        -a ) git clone https://aur.archlinux.org/$2
+            ;;
+        -bb ) git clone https://bitbucket.org/$2
+            ;;
+    esac
+}

@@ -1,0 +1,21 @@
+#! /bin/bash
+# copy external ip of home network to dbox for ssh.
+# todo: encrypt!
+
+my_ip=$(curl -s ipecho.net/plain)
+ip_file="ip"
+stored_ip=$(tail -n1 "$ip_file" | cut -d\  -f2)
+
+SLEEP=30
+
+while true; do
+    if [[ "$my_ip" == "$stored_ip" ]]; then
+       : 
+    else
+        echo "$(date +"%F-%T") $my_ip" >> "$ip_file"
+    fi;
+    sleep $(SLEEP)m;
+done
+
+
+

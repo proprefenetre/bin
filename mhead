@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+
+EXT="VGA1"
+
+if [[ $# != 0 ]]; then
+    case $1 in
+        -l )
+            xrandr --output $EXT --rotate left
+            ;;
+        -r )
+            xrandr --output $EXT --rotate right
+            ;;
+        -n )
+            xrandr --output $EXT --auto --primary --output "LVDS1" --auto --right-of $EXT
+            ;;
+        * )
+            echo "usage:"
+            echo "$0 [-l | -r | -n]"
+            echo "-l:   rotate left"
+            echo "-r:   rotate right"
+            echo "-n:   back to normal"
+
+    esac
+else
+    if [[ $(xrandr | grep "$EXT disconnected") ]]; then
+
+        xrandr --output "LVDS1" --auto --output $EXT --off 
+    else
+        xrandr --output $EXT --auto --primary --output "LVDS1" --auto --right-of $EXT
+        . ~/.fehbg
+    fi
+fi

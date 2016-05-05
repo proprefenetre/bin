@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# by date
+
+TARGET_DIR=.
+DEST_DIR=~/files/videos
+
+get_date () {
+    echo $(stat -c %y $1 | cut -d\  -f1)
+}
+
+for date in $(stat -c %y $TARGET_DIR/* | cut -d\  -f1 | uniq); do
+    [[ ! -d $date ]] && mkdir -v -p $DEST_DIR/$date
+done
+
+for file in $TARGET_DIR/*; do
+    if [[ -d $DEST_DIR/$(get_date $file) && ! -a $DEST_DIR/$(get_date $file)/$file ]]; then 
+        cp $file $DEST_DIR/$(get_date $file)/$file && echo "copied $file to $DEST_DIR/$(get_date $file)";
+    elif [[ -a $DEST_DIR/$(get_date $file)/$file ]]; then
+        echo "$file already exists at destination";
+    else
+        echo "$file -- wtf ru doing?!!";
+    fi
+done
+

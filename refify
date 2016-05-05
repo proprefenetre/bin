@@ -1,0 +1,100 @@
+#!/usr/bin/python
+#-*- encoding: utf-8 -*-
+
+book = """
+@book{{{key},
+    \ttitle="{title}",
+    \tauthor="{author}",
+    \tyear="{year}",
+    \tseries="{series}",
+    \tnumber="{number}",
+    \tedition="{edition}",
+    \tlocation="{location}",
+    \tpublisher="{publisher}",
+}}
+"""
+
+article = """
+@article{{{key},
+    \ttitle="{title}",
+    \tauthor="{author}",
+    \tjournal="{journal}",
+    \tvolume="{volume}",
+    \tyear="{year}",
+    \tpages="{pages}",
+}}
+"""
+
+incollection = """
+@incollection{{{key},
+    \ttitle="{title}",
+    \tauthor="{author}",
+    \tbooktitle="{booktitle}",
+    \tedition="{edition}",
+    \teditor="{editor}",
+    \tseries="{series}",
+    \tnumber="{number}",
+    \tyear="{year}",
+    \tpages="{pages}",
+    \tlocation="{location}",
+    \tpublisher="{publisher}",
+}}
+"""
+def ref(refs_file, typ):
+
+    if typ == 'book':
+        with open(refs_file, 'a') as refs:
+            refs.write(book.format(
+                                    key = input('keyw: '),
+                                    title = input('title: '),
+                                    edition = input('edition: '),
+                                    series = input('series: '),
+                                    number = input('number: '),
+                                    author = input('author: '),
+                                    year = input('year: '),
+                                    location = input('location: '),
+                                    publisher = input('publisher: ')
+                                    ))
+
+    elif typ == 'article':
+        with open(refs_file, 'a') as refs:
+            refs.write(article.format(
+                                    key=input('keyw: '),
+                                    title=input('title: '),
+                                    author=input('author: '),
+                                    journal=input('journal: '),
+                                    volume=input('volume: '),
+                                    year=input('year: '),
+                                    pages=input('pages: ')
+                                    ))
+
+    elif typ == 'incollection':
+        with open(refs_file, 'a') as refs:
+            refs.write(incollection.format(
+                                    key=input('keyw: '),
+                                    title=input('title: '),
+                                    author=input('author: '),
+                                    booktitle=input('booktitle: '),
+                                    edition=input('edition: '),
+                                    series=input('series: '),
+                                    number=input('number: '),
+                                    editor=input('editor: '),
+                                    year=input('year: '),
+                                    pages=input('pages: '),
+                                    location=input('location: '),
+                                    publisher=input('publisher: ')
+                                    ))
+
+if __name__ == '__main__':
+
+    f = "refs.bib"
+   
+    inp = ""
+    while inp is not 'n':
+        ref(f, input('type: '))
+
+        inp = input("add another? ")
+    
+
+
+        
