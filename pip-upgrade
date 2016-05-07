@@ -7,5 +7,5 @@ set -u
 set -o pipefail
 
 for pkg in $(pip freeze); do
-    pip install --upgrade ${x%==*};
+    pip install --upgrade ${pkg%==*};
 done
