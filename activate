@@ -7,10 +7,11 @@ set -u
 set -o pipefail
 
 # activating a pyenv
-python_dir="$HOME/projects/python/" 
+python_dir="$HOME/projects/python" 
 
 if [[ -d $python_dir/$1 ]]; then
-    source $python_dir/$1/bin/activate && cd $python_dir/$1
+    cd $python_dir/$1
+    source $python_dir/$1/bin/activate
 else
     echo "not a virtual environment"
 fi
