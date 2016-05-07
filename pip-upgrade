@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+# strict mode:
+set -e
+set -u
+set -o pipefail
+
+for pkg in $(pip freeze); do
+    pip install --upgrade ${x%==*};
+done
