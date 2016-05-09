@@ -4,26 +4,26 @@ EXT="VGA1"
 
 if [[ $# != 0 ]]; then
     case $1 in
-        -l )
-            xrandr --output $EXT --rotate left
+        -l ) xrandr --output $EXT --rotate left
             ;;
-        -r )
-            xrandr --output $EXT --rotate right
+        -r ) xrandr --output $EXT --rotate right
             ;;
-        -n )
-            xrandr --output $EXT --auto --primary --output "LVDS1" --auto --right-of $EXT
+        # this acts weird. Returning the display back to normal only works 
+        # with with "mhead -n" followed by the xrandr command below ("mhead")
+        -n ) xrandr --output $EXT --rotate normal 
+            ;;
+        -i ) xrandr --output "LVDS1" --auto --primary --output $EXT --auto --right-of "LVDS1" 
             ;;
         * )
             echo "usage:"
-            echo "$0 [-l | -r | -n]"
+            echo "$0 [-l | -r | -n | -i]"
             echo "-l:   rotate left"
             echo "-r:   rotate right"
             echo "-n:   back to normal"
-
+            echo "-i:   switch primary/secondary screen"
     esac
 else
     if [[ $(xrandr | grep "$EXT disconnected") ]]; then
-
         xrandr --output "LVDS1" --auto --output $EXT --off 
     else
         xrandr --output $EXT --auto --primary --output "LVDS1" --auto --right-of $EXT
