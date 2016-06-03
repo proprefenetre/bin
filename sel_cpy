@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# strict mode:
+set -e -u
+
+[ $# -eq 0 ] && echo "No arguments found" && exit 1
+
+SEL=$(/usr/bin/xsel --primary)
+
+OUT=$1
+
+echo $SEL >> $OUT
