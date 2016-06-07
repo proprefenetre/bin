@@ -1,10 +1,10 @@
 #!/bin/bash
 
-
 # strict mode:
-set -e
-set -u
-set -o pipefail
+set -e -u
+
+
+pip install --upgrade pip
 
 for pkg in $(pip freeze); do
     pip install --upgrade ${pkg%==*};
