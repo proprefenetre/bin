@@ -10,7 +10,7 @@ if [[ $# != 0 ]]; then
         # with with "mhead -n" followed by the xrandr command below ("mhead")
         -n ) xrandr --output VGA1 --rotate normal 
             ;;
-        -i ) xrandr --output LVDS1 --auto --primary --output VGA1 --auto --right-of LVDS1 
+        -i ) xrandr --output LVDS1 --auto --output VGA1 --auto --right-of LVDS1 
             ;;
         * )
             echo "usage:"
@@ -24,7 +24,7 @@ else
     if [[ $(xrandr | grep "VGA1 disconnected") ]]; then
         xrandr --output LVDS1 --auto --output VGA1 --off 
     else
-        xrandr --output VGA1 --auto --primary --left-of LVDS1
+        xrandr --output VGA1 --auto --left-of LVDS1 --output LVDS1 --auto
         . ~/.fehbg
     fi
 fi
