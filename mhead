@@ -1,16 +1,20 @@
 #!/usr/bin/bash
 
+
+VGA=$(xrandr -q | grep "1440x900+0+0" | awk '{print $1'})
+LVDS=$(xrandr -q | grep "1366x768+1440+0" | awk '{print $1'})
+
 if [[ $# != 0 ]]; then
     case $1 in
-        -l ) xrandr --output VGA1 --rotate left
+        -l ) xrandr --output $VGA --rotate left
             ;;
-        -r ) xrandr --output VGA1 --rotate right
+        -r ) xrandr --output $VGA --rotate right
             ;;
         # this acts weird. Returning the display back to normal only works 
         # with with "mhead -n" followed by the xrandr command below ("mhead")
-        -n ) xrandr --output VGA1 --rotate normal 
+        -n ) xrandr --output $VGA --rotate normal 
             ;;
-        -i ) xrandr --output LVDS1 --auto --output VGA1 --auto --right-of LVDS1 
+        -i ) xrandr --output $LVDS --auto --output $VGA --auto --right-of $LVDS 
             ;;
         * )
             echo "usage:"
@@ -21,10 +25,13 @@ if [[ $# != 0 ]]; then
             echo "-i:   switch primary/secondary screen"
     esac
 else
-    if [[ $(xrandr | grep "VGA1 disconnected") ]]; then
-        xrandr --output LVDS1 --auto --output VGA1 --off 
+    if [[ $(xrandr | grep "$VGA disconnected") ]]; then
+        xrandr --output $LVDS --auto --output $VGA --off 
     else
-        xrandr --output LVDS1 --auto --primary --output VGA1 --auto --left-of LVDS1
-        . ~/.fehbg
-    fi
+        xrandr --output $LVDS --auto --primary --output $VGA --auto --left-of $LVDS
+        echo "+----------+"
+        echo "|   $VGA   |+--------+"
+        echo "|          || $LVDS  |"
+        echo "+----------++--------+"
+    fi        
 fi
