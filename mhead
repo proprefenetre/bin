@@ -29,6 +29,9 @@ else
         xrandr --output $LVDS --auto --output $VGA --off 
     else
         xrandr --output $LVDS --auto --primary --output $VGA --auto --left-of $LVDS
+
+    [[ -f $HOME/.fehbg ]] && . $HOME/.fehbg
+
         echo "+----------+"
         echo "|   $VGA   |+--------+"
         echo "|          || $LVDS  |"

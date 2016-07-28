@@ -1,7 +1,0 @@
-#!/usr/bin/bash
-set -e
-set -u
-
-d=$1
-
-[[ ! -d $d ]] && mkdir -v $d && cd $d
