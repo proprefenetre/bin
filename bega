@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# strict mode:
+set -e -u
+
+while true; do
+    git add ./*
+    git commit -m "[$(date +%D\ %T)] automated commit" &> /dev/null
+    echo "$0: active"
+    sleep 5m
+done
+
