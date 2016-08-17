@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# strict mode:
+set -e -u
+
+my_ip=$(curl -s ipecho.net/plain)
+
+echo $my_ip
+# ip_file="$HOME/files/backups/ip"
+# stored_ip=$(tail -n1 "$ip_file" | cut -d\  -f2)
+
+# SLEEP=60
+
+# while true; do
+#     if [[ "$my_ip" != "$stored_ip" ]]; then
+#         echo "[$(date +"%F-%T")]    $my_ip" >> "$ip_file"
+#     fi;
+#     sleep $(SLEEP)m;
+# done 

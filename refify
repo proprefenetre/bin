@@ -40,6 +40,17 @@ incollection = """
     \tpublisher="{publisher}",
 }}
 """
+
+inproceedings = """
+@inproceedings{{{key},
+    \ttitle="{title}",
+    \tauthor="{author}",
+    \tbooktitle="{booktitle}",
+    \tyear="{year}",
+    \tpublisher="{publisher}",
+    \tpages="{pages}",
+}}
+"""
 def ref(refs_file, typ):
 
     if typ == 'book':
@@ -85,6 +96,17 @@ def ref(refs_file, typ):
                                     publisher=input('publisher: ')
                                     ))
 
+    elif typ == 'inproceedings':
+        with open(refs_file, 'a') as refs:
+            refs.write(inproceedings.format(
+                                    key=input('keyw: '),
+                                    title=input('title: '),
+                                    author=input('author: '),
+                                    booktitle=input('booktitle: '),
+                                    year=input('year: '),
+                                    pages=input('pages: '),
+                                    publisher=input('publisher: ')
+                                    ))
 if __name__ == '__main__':
 
     f = "refs.bib"
