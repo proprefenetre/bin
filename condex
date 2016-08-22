@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from collections import OrderedDict
+import sys
+
+expressions = """-a true if file exists
+-b true if file exists and is a block special file
+-c true if file exists and is a character special file
+-d true if file exists and is a directory
+-e true if file exists
+-f true if file exists and is a regular file
+-g true if file exists and its set-group-id bit is set
+-h true if file exists and is a symbolic link
+-k true if file exists and its 'sticky' bit is  set
+-p true if file exists and is a name pipe (FIFO)
+-r true if file exists and is readable
+-s true if file exists and has a size greater than zero
+-t true if file descriptor is open and refers to a terminal
+-u true if file exists and its set-user-id bit is set
+-w true if file exists and is writable
+-x true if file exists and is executable
+-g true if file exists and is owned by the effective group id
+-L true if file exists and is a symbolic link
+-N true if file exists and has been modified since it was last read
+-O true if file exists and is owned by the effective user id
+-S true if file exists and is a socket
+-ef (infix) true if file1 and file2 refer to the same device and inode numbers
+-nt (infix) true if file1 is newer than file2, or if file1 exists and file2 \
+does not
+-ot (infix) true if file1 is older than file2, or if file2 exists and file1 \
+does not
+-o true if shell option is enabled
+-v true if shell variable is set
+-R true if shell variable is set and is a name reference
+-z true if the length of string is zero
+-n true if the length of string is non-zero
+-eq (infix) equal to
+-ne (infix) not equal to
+-lt (infix) less than
+-gt (infix) greater than
+-ge (infix) greater than or equal"""
+
+expr_list = [line.split() for line in expressions.split('\n')]
+expr_dict = OrderedDict([(e, ' '.join(m)) for e, *m in expr_list])
+
+
+def outp(arg):
+    print('{}: {}\n'.format(arg, expr_dict[arg]))
+
+
+def halp():
+    print('usage: condex [EXPR] \n\n\tEXPR:  a bash conditional expression\n')
+
+try:
+    outp(sys.argv[1])
+except IndexError:
+    halp()
+    sys.exit(1)
