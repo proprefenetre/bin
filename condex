@@ -54,6 +54,6 @@ def halp():
 
 try:
     outp(sys.argv[1])
-except IndexError:
+except (IndexError, KeyError):
     halp()
     sys.exit(1)
