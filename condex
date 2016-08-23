@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from collections import OrderedDict
+from collections import ChainMap
 import sys
+from functools import partial
 
-expressions = OrderedDict([
+expressions = dict([
     ('-a', 'true if file exists'),
     ('-b', 'true if file exists and is a block special file'),
     ('-c', 'true if file exists and is a character special file'),
@@ -45,7 +46,7 @@ expressions = OrderedDict([
     ('-ge', '(infix) greater than or equal')
 ])
 
-pos_params = OrderedDict([
+pos_params = dict([
     ('$0', 'Filename of script'),
     ('$1', 'Positional parameter 1'),
     ('${10}', 'Positional parameter #10'),
@@ -62,24 +63,22 @@ pos_params = OrderedDict([
 ])
 
 
-
-def outp(arg):
-    if arg in expressions:
-        meaning = expressions[arg]
-    elif arg in pos_params:
-        meaning = pos_params[arg]
-    else:
-        raise KeyError
-
-    return '{}: {}\n'.format(arg, meaning)
-
 def halp():
     print('usage: condex [EXPR | PP] \n\n\tEXPR:\tbash conditional expression or '
           'positional parameter (escape the $)\n')
 
-try:
-    print(outp(sys.argv[1]))
-except (IndexError, KeyError) as e:
-    print('Error: invalid/missing argument')
-    halp()
-    sys.exit(1)
+
+if __name__ == "__main__":
+    c = ChainMap(expressions, pos_params)
+    try:
+        print('{}\n'.format(c[sys.argv[1]]))
+        sys.exit(0)
+    except KeyError as e:
+        print('Error: {} is not a valid Bash expression or positional parameter\n'.
+              format(e))
+        sys.exit(1)
+    except IndexError:
+        halp()
+        sys.exit(1)
+
+
