@@ -80,5 +80,3 @@ if __name__ == "__main__":
     except IndexError:
         halp()
         sys.exit(1)
-
-
