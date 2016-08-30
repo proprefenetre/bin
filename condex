@@ -2,81 +2,117 @@
 # -*- coding: utf-8 -*-
 
 from collections import ChainMap
-import sys
 from functools import partial
-
-expressions = dict([
-    ('-a', 'true if file exists'),
-    ('-b', 'true if file exists and is a block special file'),
-    ('-c', 'true if file exists and is a character special file'),
-    ('-d', 'true if file exists and is a directory'),
-    ('-e', 'true if file exists'),
-    ('-f', 'true if file exists and is a regular file'),
-    ('-g', 'true if file exists and its set-group-id bit is set'),
-    ('-h', 'true if file exists and is a symbolic link'),
-    ('-k', 'true if file exists and its sticky bit is  set'),
-    ('-p', 'true if file exists and is a name pipe (FIFO)'),
-    ('-r', 'true if file exists and is readable'),
-    ('-s', 'true if file exists and has a size greater than zero'),
-    ('-t', 'true if file descriptor is open and refers to a terminal'),
-    ('-u', 'true if file exists and its set-user-id bit is set'),
-    ('-w', 'true if file exists and is writable'),
-    ('-x', 'true if file exists and is executable'),
-    ('-g', 'true if file exists and is owned by the effective group id'),
-    ('-L', 'true if file exists and is a symbolic link'),
-    ('-N', 'true if file exists and has been modified since it was last '
-     'read'),
-    ('-O', 'true if file exists and is owned by the effective user id'),
-    ('-S', 'true if file exists and is a socket'),
-    ('-ef', '(infix) true if file1 and file2 refer to the same device and' 
-     ' inode numbers'),
-    ('-nt', '(infix) true if file1 is newer than file2)), or if file1 exists'
-     ' and file2 does not'),
-    ('-ot', '(infix) true if file1 is older than file2), or if file2 exists '
-     'and file1 does not'),
-    ('-o', 'true if shell option is enabled'),
-    ('-v', 'true if shell variable is set'),
-    ('-R', 'true if shell variable is set and is a name reference'),
-    ('-z', 'true if the length of string is zero'),
-    ('-n', 'true if the length of string is non-zero'),
-    ('-eq', '(infix) equal to'),
-    ('-ne', '(infix) not equal to'),
-    ('-lt', '(infix) less than'),
-    ('-gt', '(infix) greater than'),
-    ('-ge', '(infix) greater than or equal')
-])
-
-pos_params = dict([
-    ('$0', 'Filename of script'),
-    ('$1', 'Positional parameter 1'),
-    ('${10}', 'Positional parameter #10'),
-    ('$#', 'Number of positional parameters'),
-    ('$*', 'All the positional parameters as a single word; quote for truth'),
-    ('$@', 'All the positional parameters as separate strings'),
-    ('${#*}', 'Number of positional parameters'),
-    ('${#@}', 'Number of positional parameters'),
-    ('$?', 'Return value'),
-    ('$$', 'Process ID (PID) of script'),
-    ('$-', 'Flags passed to script (using set)'),
-    ('$_', 'Last argument of previous command'),
-    ('$!', 'Process ID (PID) of last job run in background')
-])
-
+import sys
 
 def halp():
-    print('usage: condex [EXPR | PP] \n\n\tEXPR:\tbash conditional expression or '
-          'positional parameter (escape the $)\n')
+    return 'usage: condex [EXPR | PP] --sources --help\n\n\tEXPR:\tbash conditional expression ' \
+           'or positional parameter (escape special characters)\n'
+
+
+expressions = {
+    '-a': 'true if file exists',
+    '-b': 'true if file exists and is a block special file',
+    '-c': 'true if file exists and is a character special file',
+    '-d': 'true if file exists and is a directory',
+    '-e': 'true if file exists',
+    '-f': 'true if file exists and is a regular file',
+    '-g': 'true if file exists and its set-group-id bit is set',
+    '-h': 'true if file exists and is a symbolic link',
+    '-k': 'true if file exists and its sticky bit is  set',
+    '-p': 'true if file exists and is a name pipe (FIFO)',
+    '-r': 'true if file exists and is readable',
+    '-s': 'true if file exists and has a size greater than zero',
+    '-t': 'true if file descriptor is open and refers to a terminal',
+    '-u': 'true if file exists and its set-user-id bit is set',
+    '-w': 'true if file exists and is writable',
+    '-x': 'true if file exists and is executable',
+    '-g': 'true if file exists and is owned by the effective group id',
+    '-L': 'true if file exists and is a symbolic link',
+    '-N': 'true if file exists and has been modified since it was last read',
+    '-O': 'true if file exists and is owned by the effective user id',
+    '-S': 'true if file exists and is a socket',
+    '-ef': '(infix) true if file1 and file2 refer to the same device and ' \
+    'inode numbers',
+    '-nt': '(infix) true if file1 is newer than file2), or if file1 exists ' \
+     'and file2 does not',
+    '-ot': '(infix) true if file1 is older than file2, or if file2 exists ' \
+    'and file1 does not',
+    '-o': 'true if shell option is enabled',
+    '-v': 'true if shell variable is set',
+    '-R': 'true if shell variable is set and is a name reference',
+    '-z': 'true if the length of string is zero',
+    '-n': 'true if the length of string is non-zero',
+    '-eq': '(infix) equal to',
+    '-ne': '(infix) not equal to',
+    '-lt': '(infix) less than',
+    '-gt': '(infix) greater than',
+    '-ge': '(infix) greater than or equal'
+}
+
+pos_params = {
+    '$0': 'Filename of script',
+    '$1': 'Positional parameter 1',
+    '${10}': 'Positional parameter #10',
+    '$#': 'Number of positional parameters',
+    '$*': 'All the positional parameters as a single word; quote for truth',
+    '$@': 'All the positional parameters as separate strings',
+    '${#*}': 'Number of positional parameters',
+    '${#@}': 'Number of positional parameters',
+    '$?': 'Return value',
+    '$$': 'Process ID (PID) of script',
+    '$-': 'Flags passed to script (using set)',
+    '$_': 'Last argument of previous command',
+    '$!': 'Process ID (PID) of last job run in background',
+    'quoted': '$*'
+}
+
+redirection = {
+    '0': 'stdin',
+    '1': 'stdout',
+    '2': 'stderr',
+    '3': 'new file descriptor',
+    '4': 'new file descriptor',
+    '>': '"command > file": redirect stdout to file descriptor',
+    '2>': '"command 2> file": redirect stderr to file',
+    '<': '"command < file": read from file instead of stdin',
+    '|': '"command | command2": connect stdout and stdin of commands',
+    '>|': '"command >| file": overwrite (existing) file',
+    '<>': '"command <> file": command both reads and writes to/from file',
+    '>&': '"command 2&>1": data written to 2 (stderr) will go ' \
+            'to the destination of 1 (stdout)',
+    '>& >': 'INCORRECT "command 2>&1 >file": redirects stdout of command to ' \
+              'file, in stead of both stderr and stdout',
+    '> >&': '"command >file 2>&1": redirect stdout and stderr to file',
+    'n': '"exec 3< file": specify an alternative file descriptor for e.g. ' \
+         '"read" to read from ("while read -u 3; do ...; done"). close 3 with ' \
+         '"exec 3>&-',
+    '<&-': 'close stdin',
+    '2>&-': 'close stderr',
+    '2>/dev/null': 'discard stderr',
+    'syntax': '"[lh] [op] [rh]":\nlh is always a file descriptor ' \
+              '(0, 1, 2, ..., n).\n op is one of <, >, >>, >| or <>\n' \
+              'rh is the target of redirection, i.e. a file, an fd, or ' \
+              '&-. don\'t include whitespace except within quotes. ' \
+              '(nb. these rules are conventions, not dictated by bash). '
+
+}
+
+misc = {
+    '--sources': 'conditional expressions: man bash\n\n' \
+                 'positional parameters: http://www.tldp.org/ldp/abs/html\n\n' \
+                 'redirection: http://wiki.bash-hackers.org/howto/redirection_tutorial',
+                 
+    '--help': halp()
+} 
 
 
 if __name__ == "__main__":
-    c = ChainMap(expressions, pos_params)
+    c = ChainMap(expressions, pos_params, redirection, misc)
     try:
         print('{}\n'.format(c[sys.argv[1]]))
-        sys.exit(0)
     except KeyError as e:
-        print('Error: {} is not a valid Bash expression or positional parameter\n'.
-              format(e))
-        sys.exit(1)
+        raise SystemExit('{} not a valid Bash expression or positional'
+                         ' parameter'.format(e))
     except IndexError:
-        halp()
-        sys.exit(1)
+        raise SystemExit(halp())

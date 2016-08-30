@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# strict mode:
+set -e -u
+
+/usr/bin/transmission-remote --add "$1"
