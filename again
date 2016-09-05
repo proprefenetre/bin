@@ -1,12 +1,75 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import xmltodict
+# source meteorological data: http://buienradar.nl
+
+import xml.etree.ElementTree as etree
 from urllib.request import urlopen
 
-with urlopen('http://xml.buienradar.nl/') as xml:
-    d = xmltodict.parse(xml)
 
-    root = d['buienradarnl']
-    data = root['weergegevens']
-    print(data['verwachting_vandaag']['samenvatting'])
+class WeatherStation:
+
+    with urlopen('http://xml.buienradar.nl/') as xml:
+        tree = etree.parse(xml)
+
+    def __init__(self, local_ws):
+        self.ws = local_ws
+        root = self.tree.getroot()
+        for e in root.findall('.//weerstations/*[stationnaam="Meetstation {}"]//'
+                              .format(local_ws)):
+            attr = e.tag
+            val = e.text if 'zin' not in e.attrib else e.attrib['zin']
+            if hasattr(self, attr):
+                raise AttributeError("Attribute '{}' already"
+                                     " defined".format(attr))
+            else:
+                setattr(self, '{}'.format(attr), val)
+
+    @classmethod
+    def meetstations(cls):
+        root = cls.tree.getroot()
+        stations = [(s.text.replace('Meetstation ', ''), s.attrib['regio'])
+                    for s in root.findall('.//stationnaam')]
+        stations.sort()
+        return stations
+
+    def weer(self):
+        return self.icoonactueel
+
+    def temperatuur(self, fahrenheit=False):
+        if not fahrenheit:
+            t = self.temperatuurGC, 'C'
+        else:
+            t = float(self.temperatuurGC) * 9 / 5 + 32, 'F'
+        return '{} °{}'.format(*t)
+
+    def wind(self, unit='bf'):
+        if unit == 'bf':
+            return '{} {}'.format(self.windsnelheidBF, unit)
+        elif unit == 'ms':
+            return '{} {}'.format(self.windsnelheidMS, unit)
+        else:
+            raise TypeError('"{}" - no such unit for wind speed'.format(unit))
+
+    def wind_direction(self, deg=False):
+        if deg:
+            return '{}°'.format(self.windrichtingGR)
+        else:
+            return self.windrichting
+
+    def windstoten(self):
+        return '{} ms'.format(self.windstotenMS)
+
+    def regen(self, mm=False):
+        if self.regenMMPU.isdigit():
+            if mm:
+                return '{} mm'.format(self.regenMMPU)
+            else:
+                return 'regen'
+        else:
+            return 'droog'
+
+if __name__ == "__main__":
+    vsch = WeatherStation('Voorschoten')
+    print('{}, {}, {}'.format(vsch.weer(), vsch.temperatuur(),
+                              vsch.regen(mm=False)))

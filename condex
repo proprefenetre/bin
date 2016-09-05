@@ -11,7 +11,7 @@ def halp():
 
 
 expressions = {
-    '-a': 'true if file exists',
+    '-a': 'true if file exists; "AND" between []',
     '-b': 'true if file exists and is a block special file',
     '-c': 'true if file exists and is a character special file',
     '-d': 'true if file exists and is a directory',
@@ -64,7 +64,10 @@ pos_params = {
     '$-': 'Flags passed to script (using set)',
     '$_': 'Last argument of previous command',
     '$!': 'Process ID (PID) of last job run in background',
-    'quoted': '$*'
+    'quoted': '$*',
+    'arguments': 'quoted: $*; separate: $@',
+    'number': '${#*}; ${#@}',
+    'return': '$?',
 }
 
 redirection = {

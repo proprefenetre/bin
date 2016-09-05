@@ -44,9 +44,9 @@ def get_fields(template):
                        if fn)
 
 
-def get_input(kind):
-    fields = {k: input('{}: '.format(k)) for k in get_fields(kind).keys()}
-    return kind.format_map(fields)
+def get_input(t):
+    fields = {k: input('{}: '.format(k)) for k in get_fields(t).keys()}
+    return t.format_map(fields)
 
 
 def halp():
