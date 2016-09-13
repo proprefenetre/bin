@@ -7,6 +7,14 @@ import xml.etree.ElementTree as etree
 from urllib.request import urlopen
 
 
+def isvalidfloat(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
 class WeatherStation:
 
     with urlopen('http://xml.buienradar.nl/') as xml:
@@ -61,7 +69,7 @@ class WeatherStation:
         return '{} ms'.format(self.windstotenMS)
 
     def regen(self, mm=False):
-        if self.regenMMPU.isdigit():
+        if isvalidfloat(self.regenMMPU):
             if mm:
                 return '{} mm'.format(self.regenMMPU)
             else:
@@ -71,5 +79,4 @@ class WeatherStation:
 
 if __name__ == "__main__":
     vsch = WeatherStation('Voorschoten')
-    print('{}, {}, {}'.format(vsch.weer(), vsch.temperatuur(),
-                              vsch.regen(mm=False)))
+    print('{}, {}, {}'.format(vsch.weer(), vsch.regen(mm=True), vsch.temperatuur()))
