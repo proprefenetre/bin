@@ -5,6 +5,9 @@
 
 import xml.etree.ElementTree as etree
 from urllib.request import urlopen
+from urllib.error import URLError
+import time
+import sys
 
 
 def isvalidfloat(s):
@@ -15,14 +18,27 @@ def isvalidfloat(s):
         return False
 
 
-class WeatherStation:
+def get_tree():    
+    try:
+        with urlopen('http://xml.buienradar.nl/') as xml:
+            tree = etree.parse(xml)
+        return tree
+    except URLError:
+        return 'offline again'
 
-    with urlopen('http://xml.buienradar.nl/') as xml:
-        tree = etree.parse(xml)
+
+class WeatherStation:
+    
+    tree = get_tree()
 
     def __init__(self, local_ws):
         self.ws = local_ws
-        root = self.tree.getroot()
+
+        try: 
+            root = self.tree.getroot()
+        except TypeError:
+            return 'offline again'
+
         for e in root.findall('.//weerstations/*[stationnaam="Meetstation {}"]//'
                               .format(local_ws)):
             attr = e.tag
@@ -78,5 +94,8 @@ class WeatherStation:
             return 'droog'
 
 if __name__ == "__main__":
-    vsch = WeatherStation('Voorschoten')
-    print('{}, {}, {}'.format(vsch.weer(), vsch.regen(mm=True), vsch.temperatuur()))
+    try:
+        vsch = WeatherStation('Voorschoten')
+        print('{}, {}, {}'.format(vsch.weer(), vsch.regen(mm=True), vsch.temperatuur()))
+    except:
+        print('offline again')

@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from collections import ChainMap
 from functools import partial
+import re
 import sys
 
 def halp():
@@ -47,7 +48,7 @@ expressions = {
     '-ne': '(infix) not equal to',
     '-lt': '(infix) less than',
     '-gt': '(infix) greater than',
-    '-ge': '(infix) greater than or equal'
+    '-ge': '(infix) greater than or equal',
 }
 
 pos_params = {
@@ -101,17 +102,20 @@ redirection = {
 
 }
 
+syntax = {
+    '$': 'identifies a variable, e.g. "$var"'
+}
+
 misc = {
     '--sources': 'conditional expressions: man bash\n\n' \
                  'positional parameters: http://www.tldp.org/ldp/abs/html\n\n' \
                  'redirection: http://wiki.bash-hackers.org/howto/redirection_tutorial',
                  
-    '--help': halp()
+    '--help': halp(),
 } 
 
-
 if __name__ == "__main__":
-    c = ChainMap(expressions, pos_params, redirection, misc)
+    c = ChainMap(expressions, misc, pos_params, redirection, syntax)
     try:
         print('{}\n'.format(c[sys.argv[1]]))
     except KeyError as e:
