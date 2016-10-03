@@ -87,7 +87,7 @@ class WeatherStation:
     def regen(self, mm=False):
         if isvalidfloat(self.regenMMPU):
             if mm:
-                return '{} mm'.format(self.regenMMPU)
+                return '{} mm'.format(round(float(self.regenMMPU), 2))
             else:
                 return 'regen'
         else:

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# strict mode:
+set -e -u
+
+lsimg=$(mktemp --tmpdir XXXX.png)
+
+# scrot -e 'convert -blur 0x3 $f /tmp/lockbg.png;rm $f'
+scrot $lsimg
+mogrify -scale 10% -scale 1000% $lsimg
+
+i3lock -ui $lsimg
+rm $lsimg
