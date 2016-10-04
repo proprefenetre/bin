@@ -3,11 +3,15 @@
 # strict mode:
 set -e -u
 
-lsimg=$(mktemp --tmpdir XXXX.png)
+tmpdir="/run/user/$UID/lock"
+[[ ! -d "$tmpdir" ]] && mkdir "$tmpdir"
 
-# scrot -e 'convert -blur 0x3 $f /tmp/lockbg.png;rm $f'
-scrot $lsimg
-mogrify -scale 10% -scale 1000% $lsimg
+lock_icon="$HOME/files/pics/lock_round-red.png"
+image="$tmpdir/bg.png"
 
-i3lock -ui $lsimg
-rm $lsimg
+scrot "$image"
+convert "$image" -scale 10% -scale 1000% -fill black -colorize 25% "$image"
+[[ -f "$lock_icon" ]] && convert "$image" "$lock_icon" -gravity center -composite "$image"
+
+i3lock -ui "$image"
+rm "$image"
