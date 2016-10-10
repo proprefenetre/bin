@@ -1,11 +1,6 @@
 #!/bin/bash
 
-# strict mode:
-set -e -u
-
-tmpdir="/run/user/$UID/lock"
-[[ ! -d "$tmpdir" ]] && mkdir "$tmpdir"
-
+tmpdir="/run/user/$UID"
 lock_icon="$HOME/files/pics/lock_round-red.png"
 image="$tmpdir/bg.png"
 
@@ -13,5 +8,5 @@ scrot "$image"
 convert "$image" -scale 10% -scale 1000% -fill black -colorize 25% "$image"
 [[ -f "$lock_icon" ]] && convert "$image" "$lock_icon" -gravity center -composite "$image"
 
-i3lock -ui "$image"
+i3lock -ui "$image" 
 rm "$image"

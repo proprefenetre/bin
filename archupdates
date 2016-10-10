@@ -1,0 +1,21 @@
+#!/bin/bash
+
+while true; do
+    nupdates=$(checkupdates | wc -l)
+
+    if [[ $nupdates > 10 ]]; then
+        urgency='critical'
+    else
+        if [[ $nupdates > 5 ]]; then
+            urgency='normal'
+        else
+            if [[ $nupdates > 0 ]]; then
+                urgency='low'
+            fi
+        fi
+    fi
+
+    notify-send -a "Updates" "$(printf '%s update(s) pending' $nupdates)" --urgency="$urgency"
+    sleep 1h
+done
+
