@@ -9,4 +9,5 @@ convert "$image" -scale 10% -scale 1000% -fill black -colorize 25% "$image"
 [[ -f "$lock_icon" ]] && convert "$image" "$lock_icon" -gravity center -composite "$image"
 
 i3lock -ui "$image" 
+hsetroot -fill "$(shuf -e $HOME/files/pics/wallpaper/* -n 1)"
 rm "$image"

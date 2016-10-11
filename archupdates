@@ -1,21 +1,20 @@
 #!/bin/bash
 
 while true; do
-    nupdates=$(checkupdates | wc -l)
+    pkgupdates=$(checkupdates | wc -l)
+    aurupdates=$(cower -u | wc -l)
+    num_updates=$(($pkgupdates + $aurupdates))
 
-    if [[ $nupdates > 10 ]]; then
-        urgency='critical'
-    else
-        if [[ $nupdates > 5 ]]; then
-            urgency='normal'
+    if [[ $num_updates > 0 ]]; then
+        if [[ $num_updates > 5 ]]; then
+            urgency='critical'
         else
-            if [[ $nupdates > 0 ]]; then
-                urgency='low'
-            fi
+            urgency='normal'
         fi
+        notify-send -a "Updates" "$(printf 'Pkgs: %-s\nAur: %2s' $pkgupdates $aurupdates)" --urgency="$urgency"
+    else
+        :
     fi
-
-    notify-send -a "Updates" "$(printf '%s update(s) pending' $nupdates)" --urgency="$urgency"
     sleep 1h
 done
 
