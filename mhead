@@ -1,18 +1,31 @@
 #!/usr/bin/bash
 
 
-VGA=VGA1
-LVDS=LVDS1
+VGA=$(xrandr | grep -i "vga" | awk '{print $1}')
+LVDS=$(xrandr | grep -i "lvds" | awk '{print $1}')
 
 if [[ $# != 0 ]]; then
     case $1 in
-        -l ) xrandr --output $VGA --rotate left;;
-        -r ) xrandr --output $VGA --rotate right;;
+        --test ) echo "$LVDS"
+                 echo "$VGA"
+                 ;;
+
+        -l ) xrandr --output "$VGA" --rotate left
+             ;;
+        -r ) xrandr --output "$VGA" --rotate right
+             ;;
         # this acts weird. Returning the display back to normal only works 
         # with with "mhead -n" followed by the xrandr command below ("mhead")
-        -n ) xrandr --output $VGA --rotate normal;;
-        -i ) xrandr --output $LVDS --auto --output $VGA --auto --left-of $LVDS;;
-        -o ) xrandr --output $LVDS --auto --output $VGA --off;;
+        -n ) xrandr --output "$VGA" --rotate normal
+             ;;
+        -i ) xrandr --output "$LVDS" --auto --primary --output "$VGA" --auto --left-of "$LVDS"
+             ;;
+        -b ) xrandr --output "$LVDS" --auto --primary --output "$VGA" --auto --right-of "$LVDS"
+             ;;
+        -o ) xrandr --output "$LVDS" --auto --output "$VGA" --off
+             ;;
+        -e ) xrandr --output "$VGA" --auto --output "$LVDS" --off 
+             ;;
 
         * )
             echo "usage:"
@@ -21,14 +34,17 @@ if [[ $# != 0 ]]; then
             echo "-r:   rotate right"
             echo "-n:   back to normal"
             echo "-i:   switch primary/secondary screen"
+            echo "-e:   external monitor is only monitor"
+            echo "-b:   use both monitors; laptop is primary"
+            ;;
     esac
 else
     if [[ $(xrandr | grep "$VGA disconnected") ]]; then
-        xrandr --output $LVDS --auto --output $VGA --off 
+        xrandr --output "$LVDS" --auto --output "$VGA" --off 
     else
-        xrandr --output $LVDS --auto --primary --output $VGA --auto --right-of $LVDS --rotate left
+        xrandr --output "$VGA" --auto --output "$LVDS" --off
 
-    [[ -f $HOME/.fehbg ]] && . $HOME/.fehbg
+    [[ -f "$HOME/.fehbg" ]] && . "$HOME/.fehbg"
 
     fi        
 fi
