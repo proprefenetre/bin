@@ -3,6 +3,7 @@
 
 # source meteorological data: http://buienradar.nl
 
+from collections import OrderedDict
 import xml.etree.ElementTree as etree
 from urllib.request import urlopen
 from urllib.error import URLError
@@ -69,11 +70,12 @@ class WeatherStation:
 
     def wind(self, unit='bf'):
         if unit == 'bf':
-            return '{} {}'.format(self.windsnelheidBF, unit)
+            windsnelheid = self.windsnelheidBF
         elif unit == 'ms':
-            return '{} {}'.format(self.windsnelheidMS, unit)
+            windsnelheid = self.windsnelhedMS
         else:
             raise TypeError('"{}" - no such unit for wind speed'.format(unit))
+        return '{}{}'.format(windsnelheid, unit)
 
     def wind_direction(self, deg=False):
         if deg:
@@ -87,15 +89,24 @@ class WeatherStation:
     def regen(self, mm=False):
         if isvalidfloat(self.regenMMPU):
             if mm:
-                return '{} mm'.format(self.regenMMPU)
+                return '{} mm'.format(round(float(self.regenMMPU), 2))
             else:
                 return 'regen'
         else:
             return 'droog'
 
+    def report(self, funcs):
+        report = {}
+        for func in funcs:
+            report[func] = getattr(self, func)()
+        return report
+
+
 if __name__ == "__main__":
+
     try:
         vsch = WeatherStation('Voorschoten')
-        print('{}, {}, {}'.format(vsch.weer(), vsch.regen(mm=True), vsch.temperatuur()))
+        report = vsch.report(['weer', 'regen', 'wind', 'wind_direction', 'temperatuur'])
+        print('{weer}, {regen}, {wind} {wind_direction}, {temperatuur}'.format(**report))
     except:
-        print('offline again')
+        raise

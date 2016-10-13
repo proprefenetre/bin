@@ -1,0 +1,20 @@
+#!/bin/bash
+
+while true; do
+    pkgupdates=$(checkupdates | wc -l)
+    aurupdates=$(cower -u | wc -l)
+    num_updates=$(($pkgupdates + $aurupdates))
+
+    if [[ $num_updates > 0 ]]; then
+        if [[ $num_updates > 5 ]]; then
+            urgency='critical'
+        else
+            urgency='normal'
+        fi
+        notify-send -a "Updates" "$(printf 'Pkgs: %-s\nAur: %2s' $pkgupdates $aurupdates)" --urgency="$urgency"
+    else
+        :
+    fi
+    sleep 1h
+done
+

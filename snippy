@@ -1,0 +1,14 @@
+#!/bin/bash
+#
+# Inspired by "snippy" by "sessy" 
+# (https://bbs.archlinux.org/viewtopic.php?id=71938)
+#
+
+CONFIG=${HOME}/.snippyrc
+
+# Display the menu and get the selection
+SELECTION=$(cat $CONFIG | rofi -dmenu)
+
+if [[ ${SELECTION} ]]; then
+    printf '%s' "${SELECTION}" | xclip -i -selection clipboard 
+fi

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+scrot -d 5 -e 'mv $f ~/files/pics/' && notify-send -a 'scrot' 'screenshot taken'
