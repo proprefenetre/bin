@@ -58,15 +58,12 @@ class WeatherStation:
         stations.sort()
         return stations
 
-    def weer(self):
+    def summary(self):
         return self.icoonactueel
 
-    def temperatuur(self, fahrenheit=False):
-        if not fahrenheit:
-            t = self.temperatuurGC, 'C'
-        else:
-            t = float(self.temperatuurGC) * 9 / 5 + 32, 'F'
-        return '{} °{}'.format(*t)
+    def temperatuur(self, unit='C'):
+        t = float(self.temperatuurGC) * 9 / 5 + 32 if unit == 'F' else self.temperatuurGC
+        return '{} °{}'.format(t, unit)
 
     def wind(self, unit='bf'):
         if unit == 'bf':
@@ -106,7 +103,7 @@ if __name__ == "__main__":
 
     try:
         vsch = WeatherStation('Voorschoten')
-        report = vsch.report(['weer', 'regen', 'wind', 'wind_direction', 'temperatuur'])
-        print('{weer}, {regen}, {wind} {wind_direction}, {temperatuur}'.format(**report))
+
+        print(' {}, {} '.format(vsch.temperatuur(), vsch.summary()))
     except:
         raise
