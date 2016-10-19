@@ -38,8 +38,6 @@ def tbl_headers(s):
     result.append(inlatex(r'} \\ \hline'))
     # Put the missing "\textbf{" in front of the list
     result.insert(0, inlatex(r'\textbf{'))
-    # Preprend the command to set the row color in front of everything
-    # result.insert(0, inlatex(r'\rowcolor{grey} '))
     return pf.Para(result)
 
 

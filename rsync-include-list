@@ -1,0 +1,13 @@
++ /home/niels/Dropbox/
++ /home/niels/Dropbox/*
++ /home/niels/projects/
++ /home/niels/projects/*
++ /home/niels/bin/
++ /home/niels/bin/*
++ /home/niels/files/
++ /home/niels/files/dotfiles/
++ /home/niels/files/dotfiles/*
+- /home/niels/files/*
++ /home/niels/.vim/
++ /home/niels/.vim/*
+- /home/niels/*
