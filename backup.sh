@@ -11,14 +11,17 @@ if [[ $# -eq 0 ]]; then
     exit 1
 fi
 
-TARGET=/media/sdc1-usb-Seagate_Expansio
+TARGET=$(find /media -name "*usb-Seagate_Expansio")
 
-# command:
+include=~/.rsync-include-list
+exclude=~/.rsync-exclude-list
+
 case $1 in
-    -d ) sudo rsync --dry-run -aAXuv --info=progress --include-from=rsync-include-list --exclude-from=rsync-exclude-list /* /media/sdb1-usb-Seagate_Expansio/new_backup 2>&1 | tee -a /home/niels/files/rsync-dry-$(date +%d%m%Y%H%M%S) 
+    -t ) echo $include > bla.txt ;;
+    -d ) sudo rsync --dry-run -aAXuv --info=progress --include-from=$include --exclude-from=$exclude /* /media/sdb1-usb-Seagate_Expansio/new_backup 2>&1 | tee -a /home/niels/files/rsync-dry-$(date +%d%m%Y%H%M%S) 
     ;;
 
-    -r ) sudo rsync -aAXuvS --info=progress --include-from=rsync-include-list --exclude-from=rsync-exclude-list /* $TARGET/arch1 2>&1 | tee -a /home/niels/files/rsync-all-$(date +%d%m%Y%H%M%S)
+    -r ) sudo rsync -aAXuvS --info=progress --include-from=$include --exclude-from=$exclude /* $TARGET/arch1 2>&1 | tee -a /home/niels/files/rsync-all-$(date +%d%m%Y%H%M%S)
     ;;
     -m ) sudo rsync -aAxuv --info=progress /home/niels/media/* $TARGET/media/ 2>&1 | tee -a /home/niels/files/rsync-media-$(date +%d%m%Y%H%M%S)
         ;;
