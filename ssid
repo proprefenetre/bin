@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+iface=wlp1s0
+
+ssid="$(iw $iface link | grep -i 'ssid' | cut -d ' ' -f2-)"
+state="$(connmanctl state | grep "State" | cut -d ' ' -f5)"
+
+case $state in
+    "online" )
+        if [[ -n "$ssid" ]]; then
+            echo "   $ssid "
+        fi
+        ;;
+
+    "idle")
+        echo "   $state "
+        ;;
+
+esac

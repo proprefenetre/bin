@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+echo ' '"   $(printf "%.0f" $(xbacklight))%"' '
+

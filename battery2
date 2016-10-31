@@ -1,0 +1,46 @@
+#! /usr/bin/env bash
+
+BAT="${1:-BAT0}"
+
+state=$(cat /sys/class/power_supply/$BAT/status)
+capacity=$(cat /sys/class/power_supply/$BAT/capacity)
+# ac=$(cat /sys/class/power_supply/AC/online)
+low=10
+
+case "$state" in
+    "Charging"|"Full" ) fa_icon='' ;;
+
+    "Discharging" )
+        if [[ "$capacity" -gt 90 ]]; then
+            fa_icon=''
+        else    
+            if [[ "$capacity" -gt 60 ]]; then
+                fa_icon=''
+            else
+                if [[ "$capacity" -gt 40 ]]; then
+                    fa_icon=''
+                else
+                    if [[ "$capacity" -gt 10 ]]; then
+                        fa_icon=''
+                    else
+                        fa_icon=''
+                    fi
+                fi
+            fi
+        fi ;;
+    "*" ) exit 1 ;;
+esac
+
+echo ' '" $fa_icon  $capacity%"' '
+
+echo ' '" $fa_icon  $capacity%"' '
+
+if [[ "$capacity" -lt "$low" ]]; then
+    if [[ "$state" = "Discharging" ]]; then
+        echo "#F5A3A3"
+    else 
+        if [[ "$state" = "Charging" ]]; then
+            echo "#70CBB6"
+        fi
+    fi
+fi

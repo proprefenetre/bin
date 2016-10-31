@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+
+echo " $(date '+%a, %d %b %Y %T') "
+
+echo " $(date '+%d/%m/%y %H:%M') "
