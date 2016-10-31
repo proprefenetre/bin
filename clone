@@ -1,10 +1,17 @@
 #!/bin/bash
 
-# see http://redsymbol.net/articles/unofficial-bash-strict-mode/
-# set -e
-# set -u
-# set -o pipefail
+usage() {
+    echo
+    echo "$(basename $0) [-gh] [-gl] [-a] [-bb]"
+    echo
+    echo "-gh       github"
+    echo "-gl       gitlab"
+    echo "-a        aur"
+    echo "-bb       bitbucket"
+    echo
+}
 
+[[ "$#" < 0 ]] && usage
 
 case $3 in
     --ssh ) url=git@git
@@ -18,5 +25,5 @@ case $1 in
     -gl ) git clone ${url}lab.com${delim}$2 ;;
     -a ) git clone https://aur.archlinux.org/$2 ;;
     -bb ) git clone https://bitbucket.org/$2 ;;
-    *) echo "-g(ithub) -a(ur.archlinux.org) -bb(itbucket) --ssh" ;;
+    *) usage
 esac
