@@ -1,30 +1,30 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 
-VGA=$(xrandr | grep -i "vga" | awk '{print $1}')
-LVDS=$(xrandr | grep -i "lvds" | awk '{print $1}')
+extern=$(xrandr | grep -i "vga" | awk '{print $1}')
+intern=$(xrandr | grep -i "lvds" | awk '{print $1}')
 
 if [[ $# != 0 ]]; then
     case $1 in
-        --test ) echo "$LVDS"
-                 echo "$VGA"
+        --test ) echo "$intern"
+                 echo "$extern"
                  ;;
 
-        -l ) xrandr --output "$VGA" --rotate left
+        -l ) xrandr --output "$extern" --rotate left
              ;;
-        -r ) xrandr --output "$VGA" --rotate right
+        -r ) xrandr --output "$extern" --rotate right
              ;;
         # this acts weird. Returning the display back to normal only works 
         # with with "mhead -n" followed by the xrandr command below ("mhead")
-        -n ) xrandr --output "$VGA" --rotate normal
+        -n ) xrandr --output "$extern" --rotate normal
              ;;
-        -i ) xrandr --output "$LVDS" --auto --primary --output "$VGA" --auto --left-of "$LVDS"
+        -i ) xrandr --output "$intern" --auto --primary --output "$extern" --auto --left-of "$intern"
              ;;
-        -b ) xrandr --output "$LVDS" --auto --primary --output "$VGA" --auto --right-of "$LVDS"
+        -b ) xrandr --output "$intern" --auto --primary --output "$extern" --auto --right-of "$intern"
              ;;
-        -o ) xrandr --output "$LVDS" --auto --output "$VGA" --off
+        -o ) xrandr --output "$intern" --auto --output "$extern" --off
              ;;
-        -e ) xrandr --output "$VGA" --auto --output "$LVDS" --off 
+        -e ) xrandr --output "$extern" --auto --output "$intern" --off 
              ;;
 
         * )
@@ -39,12 +39,10 @@ if [[ $# != 0 ]]; then
             ;;
     esac
 else
-    if [[ $(xrandr | grep "$VGA disconnected") ]]; then
-        xrandr --output "$LVDS" --auto --output "$VGA" --off 
+    if xrandr | grep "$extern disconnected"; then
+        xrandr --output "$intern" --auto --output "$extern" --off 
     else
-        xrandr --output "$VGA" --auto --output "$LVDS" --off
-
-    [[ -f "$HOME/.fehbg" ]] && . "$HOME/.fehbg"
+        xrandr --output "$extern" --auto --output "$intern" --off
 
     fi        
 fi

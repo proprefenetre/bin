@@ -2,24 +2,34 @@
 
 # by date
 
-TARGET_DIR=.
-DEST_DIR=~/files/videos
+target_dirs=("MP_ROOT/101PNV01 PRIVATE/AVCHD/BDMV/STREAM ./")
+dest_dir=~/files/videos
 
 get_date () {
     echo $(stat -c %y $1 | cut -d\  -f1)
 }
 
-for date in $(stat -c %y $TARGET_DIR/* | cut -d\  -f1 | uniq); do
-    [[ ! -d $date ]] && mkdir -v -p $DEST_DIR/$date
-done
+[[ -d "$dest_dir" ]] && mkdir -p "$dest_dir"
 
-for file in $TARGET_DIR/*; do
-    if [[ -d $DEST_DIR/$(get_date $file) && ! -a $DEST_DIR/$(get_date $file)/$file ]]; then 
-        cp $file $DEST_DIR/$(get_date $file)/$file && echo "copied $file to $DEST_DIR/$(get_date $file)";
-    elif [[ -a $DEST_DIR/$(get_date $file)/$file ]]; then
-        echo "$file already exists at destination";
-    else
-        echo "$file -- wtf ru doing?!!";
+for dir in ${target_dirs[@]}; do
+    if [[ -d "$dir" ]]; then
+        echo "$dir"
+        for date in $(stat -c %y $dir/* | cut -d\  -f1 | uniq); do
+            [[ ! -d "$date" ]] && mkdir -v -p "$dest_dir/$date"
+        done
+        
+        for file in "$dir"/*; do
+            folder=$(get_date $file)
+            fname=$(basename $file)
+            if [[ -d "$dest_dir/$folder" && ! -a "$dest_dir/$folder/$fname" ]]; then 
+                cp "$file" "$dest_dir/$folder/$fname"
+                echo "$file --> $dest_dir/$folder/$fname"
+            elif [[ -a "$dest_dir/$folder/$fname" ]]; then
+                echo "$file already exists at destination";
+            else
+                echo "$file -- wtf ru doing?!!";
+            fi
+        done
     fi
 done
 

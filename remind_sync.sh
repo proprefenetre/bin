@@ -4,6 +4,6 @@
 # on an internet connection to be reliable for symlinking
 
 while true; do
-    unison reminders -batch 1&>2
+    unison reminders -batch >/dev/null 2>&1 
     sleep 10s
 done
