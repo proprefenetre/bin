@@ -1,12 +1,10 @@
 #! /bin/sh
 
-export TR_AUTH
-TR="transmission-remote --auth transmission:transmission"
-NEW_TORRENT="$1"
+IFS=$' '
+new_torrent="$1"
 
-
-$TR --add $NEW_TORRENT 
-ID="$($TR --list | tail --lines=+2 | grep -iv "^sum\:" | wc -l)"
-$TR --torrent $ID --start --verify 
+transmission-remote --add "$new_torrent"
+id="$(transmission-remote --list | tail --lines=+2 | grep -v "^Sum\:" | wc -l)"
+transmission-remote --torrent $id --start --verify 
 
 

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# strict mode:
+set -eu
+
+old_IFS=$IFS
+IFS=$'\n'
+tr_ids=($(transmission-remote --list | tail --lines=+2 | grep -v "Sum"))
+
+for tr in ${tr_ids[@]}; do
+    id=$(echo $tr | awk '{print $1}')
+    id=${id/\*/}
+    state=$(transmission-remote -t $id -i | grep "State" | cut -d" " -f4-)
+    if [[ "$state" == "Finished" || "$state" == "Stopped" ]]; then
+        transmission-remote -t $id -r >/dev/null 2>&1
+    fi
+done
