@@ -3,7 +3,7 @@
 # by date
 
 target_dirs=("MP_ROOT/101PNV01 PRIVATE/AVCHD/BDMV/STREAM ./")
-dest_dir=~/files/videos
+dest_dir=~/media/filmpjes
 
 get_date () {
     echo $(stat -c %y $1 | cut -d\  -f1)
