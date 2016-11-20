@@ -18,7 +18,7 @@ if [[ $# != 0 ]]; then
         # with with "mhead -n" followed by the xrandr command below ("mhead")
         -n ) xrandr --output "$extern" --rotate normal
              ;;
-        -i ) xrandr --output "$intern" --auto --primary --output "$extern" --auto --left-of "$intern"
+        -i ) xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
              ;;
         -b ) xrandr --output "$intern" --auto --primary --output "$extern" --auto --right-of "$intern"
              ;;
