@@ -1,19 +1,26 @@
 #! /usr/bin/env bash
 
-iface=wlp1s0
+wifi="$(connmanctl technologies | grep "wifi" --after-context 3 | grep "Connected" | cut -d' ' -f5)"
+wlan_iface=wlp1s0
+wl_ssid="$(iw $wlan_iface link | grep -i 'ssid' | cut -d ' ' -f2-)"
 
-ssid="$(iw $iface link | grep -i 'ssid' | cut -d ' ' -f2-)"
+eth="$(connmanctl technologies | grep "ethernet" --after-context 3 | grep "Connected" | cut -d' ' -f5)"
+
 state="$(connmanctl state | grep "State" | cut -d ' ' -f5)"
 
 case $state in
     "online" )
-        if [[ -n "$ssid" ]]; then
+        if [[ $wifi == "True" ]]; then
             echo "   $ssid "
+        else 
+            if [[ $eth == "True" ]]; then
+            echo "  online "
+            fi
         fi
         ;;
 
     "idle")
-        echo "   $state "
+        echo "   offline "
         ;;
 
 esac
