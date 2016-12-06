@@ -1,6 +1,4 @@
-#!/bin/bash
-
-# strict mode:
+#! /usr/bin/env bash
 set -e -u
 
 IFS=$(echo -en "\n\b");

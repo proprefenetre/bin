@@ -2,8 +2,14 @@
 
 # by date
 
-target_dirs=("MP_ROOT/101PNV01 PRIVATE/AVCHD/BDMV/STREAM ./")
-dest_dir=~/media/filmpjes
+target_dirs=("MP_ROOT/101PNV01 PRIVATE/AVCHD/BDMV/STREAM")
+
+if [[ $HOSTNAME == "arch" ]]; then
+    dest_dir=~/files/videos
+else if [[ $HOSTNAME == "archbook" ]]; then
+    dest_dir=~/media/filmpjes
+    fi
+fi
 
 get_date () {
     echo $(stat -c %y $1 | cut -d\  -f1)
@@ -25,7 +31,8 @@ for dir in ${target_dirs[@]}; do
                 cp "$file" "$dest_dir/$folder/$fname"
                 echo "$file --> $dest_dir/$folder/$fname"
             elif [[ -a "$dest_dir/$folder/$fname" ]]; then
-                echo "$file already exists at destination";
+                # echo "$file already exists at destination";
+                :
             else
                 echo "$file -- wtf ru doing?!!";
             fi
