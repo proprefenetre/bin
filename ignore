@@ -1,0 +1,22 @@
+#!/usr/bin/bash
+
+# strict mode:
+set -e -u
+
+url=https://www.gitignore.io/api
+
+get_gitignore() {
+    curl $url/$1 >> "$file"
+    curl $url/vim >> "$file"
+}
+
+file=.gitignore
+
+case $1 in
+    -c )    get_gitignore c >/dev/null 2>&1
+        ;;
+
+    -p )    get_gitignore python >/dev/null 2>&1
+        ;;
+esac
+
