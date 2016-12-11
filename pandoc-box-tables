@@ -67,7 +67,7 @@ def do_filter(k, v, f, m):
                 latex(r'\begin{table}[h]'),
                 latex(r'\centering'),
                 latex(r'\begin{tabularx}{.75\textwidth}{%s} \hline' % new_alignment),
-                tbl_headers(v[3]),
+                # tbl_headers(v[3]),
                 tbl_contents(v[4]),
                 latex(r'\end{tabularx}'),
                 # Put the caption after the tabular so it appears under table.

@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 wifi="$(connmanctl technologies | grep "wifi" --after-context 3 | grep "Connected" | cut -d' ' -f5)"
-wlan_iface=wlp1s0
+wlan_iface=wlp3s0
 wl_ssid="$(iw $wlan_iface link | grep -i 'ssid' | cut -d ' ' -f2-)"
 
 eth="$(connmanctl technologies | grep "ethernet" --after-context 3 | grep "Connected" | cut -d' ' -f5)"
@@ -14,7 +14,7 @@ case $state in
             echo "   $wl_ssid "
         else 
             if [[ $eth == "True" ]]; then
-            echo "  online "
+            echo "   online "
             fi
         fi
         ;;
