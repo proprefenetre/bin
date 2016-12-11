@@ -11,7 +11,7 @@ state="$(connmanctl state | grep "State" | cut -d ' ' -f5)"
 case $state in
     "online" )
         if [[ $wifi == "True" ]]; then
-            echo "   $ssid "
+            echo "   $wl_ssid "
         else 
             if [[ $eth == "True" ]]; then
             echo "  online "
