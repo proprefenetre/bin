@@ -7,7 +7,7 @@ log_prefix=$(date "+%d-%m-%Y %T"):
 repos=()
 while IFS= read -r line; do
     repos+=($line)
-done < ~/.autopushrc
+done < /home/niels/.autopushrc
 
 echo $log_prefix >> "$pushlog"
 for repo in ${repos[@]}; do
