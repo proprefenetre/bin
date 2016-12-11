@@ -7,20 +7,24 @@ log_prefix=$(date "+%d-%m-%Y %T"):
 repos=()
 while IFS= read -r line; do
     repos+=($line)
-done < ~/.autopushrc
+done < /home/niels/.autopushrc
 
-# echo $log_prefix >> "$pushlog"
+echo $log_prefix >> "$pushlog"
+echo "==============================================" >> "$pushlog"
 for repo in ${repos[@]}; do
     echo "" >> "$pushlog"
     echo "Repository: $repo" >> "$pushlog"
-    echo "Repository: $repo"
     (
         cd "$HOME/$repo"
         git add --all
         git add --update
         git commit -m "autopush $(date "+%d-%m-%Y %T")" >> "$pushlog"
-        git push origin master >/dev/null 2>&1
+        git push >/dev/null 2>&1
+        
     )
+    echo "" >> "$pushlog"
+    echo "==============================================" >> "$pushlog"
+    echo "" >> "$pushlog"
 done
 
 
