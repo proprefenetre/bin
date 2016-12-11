@@ -3,14 +3,21 @@
 pushlog=~/files/autopush.log
 log_prefix=$(date "+%d-%m-%Y %T"):
 
-repos=(".dotfiles bin projects/ellipsis projects/c/modern_approach")
+# repos=(".dotfiles bin projects/ellipsis projects/c/modern_approach")
+repos=()
+while IFS= read -r line; do
+    repos+=($line)
+done < ~/.autopushrc
 
-echo $log_prefix >> "$pushlog"
+# echo $log_prefix >> "$pushlog"
 for repo in ${repos[@]}; do
-    echo "$repo" >> "$pushlog"
+    echo "" >> "$pushlog"
+    echo "Repository: $repo" >> "$pushlog"
+    echo "Repository: $repo"
     (
         cd "$HOME/$repo"
         git add --all
+        git add --update
         git commit -m "autopush $(date "+%d-%m-%Y %T")" >> "$pushlog"
         git push origin master >/dev/null 2>&1
     )
