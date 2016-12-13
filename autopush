@@ -16,6 +16,7 @@ for repo in ${repos[@]}; do
     echo "Repository: $repo" >> "$pushlog"
     (
         cd "$HOME/$repo"
+        git pull
         git add --all
         git add --update
         git commit -m "autopush $(date "+%d-%m-%Y %T")" >> "$pushlog"
