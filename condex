@@ -85,9 +85,7 @@ redirection = {
     '<>': '"command <> file": command both reads and writes to/from file',
     '>&': '"command 2&>1": data written to 2 (stderr) will go ' \
             'to the destination of 1 (stdout)',
-    '>& >': 'INCORRECT "command 2>&1 >file": redirects stdout of command to ' \
-              'file, in stead of both stderr and stdout',
-    '> >&': '"command >file 2>&1": redirect stdout and stderr to file',
+    'redirection': '"command >file 2>&1": redirect stdout and stderr to file',
     'n': '"exec 3< file": specify an alternative file descriptor for e.g. ' \
          '"read" to read from ("while read -u 3; do ...; done"). close 3 with ' \
          '"exec 3>&-',

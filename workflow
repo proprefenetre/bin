@@ -1,6 +1,8 @@
 #!/bin/bash
 
 WFDIR=~/projects/workflow/files
+# repo=https://github.com/proprefenetre/workflow
+
 # MKFILE=Makefile
 # CRSETTINGS=pandoc-crossref-settings.yaml
 # GIGNORE=.gitignore

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-connmanctl disable wifi && echo 'wifi OFF'
+connmanctl disable wifi >/dev/null 2>&1 && echo 'wifi OFF'
 sleep 3
-connmanctl enable wifi && echo 'wifi ON'
+connmanctl enable wifi >/dev/null 2>&1 && echo 'wifi ON'
 
