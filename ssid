@@ -6,14 +6,13 @@ iface() {
 }
 
 wlan_iface="$(iw dev | grep "Interface" | cut -d' ' -f2)"
-wl_ssid="$(iw $wlan_iface link | grep -i 'ssid' | cut -d ' ' -f2-)"
-
+wlan_ssid="$(iw $wlan_iface link | grep -i 'ssid' | cut -d ' ' -f2-)"
 state="$(connmanctl state | grep "State" | cut -d ' ' -f5)"
 
 case $state in
     "online" )
         if [[ $(iface "wifi") == "True" ]]; then
-            echo "   $wl_ssid "
+            echo "   $wlan_ssid "
         else 
             if [[ $(iface "ethernet") == "True" ]]; then
             echo "   online "
