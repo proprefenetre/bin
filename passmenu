@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# https://git.zx2c4.com/password-store/tree/contrib/dmenu
 
 shopt -s nullglob globstar
 
