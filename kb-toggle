@@ -27,5 +27,10 @@ case $1 in
             fi
         fi
         ;;
+    -t | --test)
+        echo "id:       $id"
+        echo "state:    $state"
+        echo "layout:   $layout"
+        ;;
 esac
 
