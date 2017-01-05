@@ -4,6 +4,7 @@ IFS=$' '
 new_torrent="$1"
 
 transmission-remote --add "$new_torrent"
+sleep 3s
 id="$(transmission-remote --list | tail --lines=+2 | grep -v "^Sum\:" | wc -l)"
 transmission-remote --torrent $id --start --verify 
 
