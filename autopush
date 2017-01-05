@@ -1,31 +1,28 @@
 #!/bin/bash
 
-pushlog=~/files/autopush.log
-log_prefix=$(date "+%d-%m-%Y %T"):
+logfile=~/files/autopush.log
+date=$(date "+%d-%m-%Y %T"):
 
-# repos=(".dotfiles bin projects/ellipsis projects/c/modern_approach")
+log() {
+    echo "$date - $1" >> "$logfile"
+}
+
 repos=()
 while IFS= read -r line; do
     repos+=($line)
 done < /home/niels/.autopushrc
 
-echo $log_prefix >> "$pushlog"
-echo "================================================" >> "$pushlog"
 for repo in ${repos[@]}; do
-    echo "" >> "$pushlog"
-    echo "Repository: $repo" >> "$pushlog"
+    log "Repository: $repo"
     (
         cd "$HOME/$repo"
         git pull >/dev/null 2>&1
         git add --all
         git add --update
-        git commit -m "autopush $(date "+%d-%m-%Y %T")" >> "$pushlog"
+        git commit -m "autopush $(date "+%d-%m-%Y %T")" && log "push complete"
         git push >/dev/null 2>&1
         
     )
-    echo "" >> "$pushlog"
-    echo "==============================================" >> "$pushlog"
-    echo "" >> "$pushlog"
 done
 
 
