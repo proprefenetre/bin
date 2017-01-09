@@ -19,7 +19,11 @@ password=$(printf '%s\n' "${password_files[@]}" | rofi -dmenu)
 [[ -n $password ]] || exit
 
 if [[ $typeit -eq 0 ]]; then
-	pass show -c "$password" 2>/dev/null
+
+        printf '%s' "${password##*/}" | xclip -i -selection clipboard 
+        # xdotool ignores dvorak keymap. 'k' is 'v' on a querty keyboard
+        xdotool search --class --onlyvisible chromium windowfocus key ctrl+k
+	pass -c "$password" 2>/dev/null
 else
 	pass show "$password" | { read -r pass; printf %s "$pass"; } |
 		xdotool type --clearmodifiers --file -

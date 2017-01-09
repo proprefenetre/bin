@@ -36,11 +36,5 @@ echo ' '" $fa_icon  $capacity%"' '
 echo ' '" $fa_icon  $capacity%"' '
 
 if [[ "$capacity" -lt "$low" ]]; then
-    if [[ "$state" = "Discharging" ]]; then
         echo "#F5A3A3"
-    else 
-        if [[ "$state" = "Charging" ]]; then
-            echo "#70CBB6"
-        fi
-    fi
 fi
