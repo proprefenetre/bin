@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+[[ $# -lt 2 ]] && echo "invalid arguments" && exit 1
+
+lib=/home/niels/drijf/library/
+
+[[ ! -d ${lib}$2 ]] && echo "$2 is not a directory" && exit 1
+
+cd $HOME/Downloads
+for f in ./*; do 
+    if [[ $f == *"$1"* ]]; then 
+        [[ ! -f $f ]] && echo "$f is not a file" && exit 1
+        mv -v "$f" "${lib}$2"
+    fi
+done
