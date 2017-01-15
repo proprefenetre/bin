@@ -24,6 +24,8 @@ if [[ $typeit -eq 0 ]]; then
         # xdotool ignores dvorak keymap. 'k' is 'v' on a querty keyboard
         xdotool search --class --onlyvisible chromium windowfocus key ctrl+k
 	pass -c "$password" 2>/dev/null
+        xdotool search --class --onlyvisible chromium windowfocus key Tab
+        xdotool search --class --onlyvisible chromium windowfocus key ctrl+v
 else
 	pass show "$password" | { read -r pass; printf %s "$pass"; } |
 		xdotool type --clearmodifiers --file -

@@ -2,7 +2,7 @@
 
 usage() {
     echo
-    echo "$(basename $0) [-gh] [-gl] [-a] [-bb]"
+    echo "$(basename $0) [-gh] [-gl] [-a] [-bb] [--ssh]"
     echo
     echo "-gh       github"
     echo "-gl       gitlab"
