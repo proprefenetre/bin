@@ -21,11 +21,13 @@ password=$(printf '%s\n' "${password_files[@]}" | rofi -dmenu)
 if [[ $typeit -eq 0 ]]; then
 
         printf '%s' "${password##*/}" | xclip -i -selection clipboard 
-        # xdotool ignores dvorak keymap. 'k' is 'v' on a querty keyboard
-        xdotool search --class --onlyvisible chromium windowfocus key ctrl+k
+        # xdotool ignores dvorak keymap, except if you load it with setxkbmap
+        xdotool search --onlyvisible --class "Chromium" windowfocus key 'ctrl+v'
+
 	pass -c "$password" 2>/dev/null
-        xdotool search --class --onlyvisible chromium windowfocus key Tab
-        xdotool search --class --onlyvisible chromium windowfocus key ctrl+v
+        xdotool search --onlyvisible --class "Chromium" windowfocus --sync key 'Tab' 
+        # but only the first time. Or it has to do with chromium, IDK.
+        xdotool search --onlyvisible --class "Chromium" windowfocus key 'ctrl+v'
 else
 	pass show "$password" | { read -r pass; printf %s "$pass"; } |
 		xdotool type --clearmodifiers --file -
