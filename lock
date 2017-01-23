@@ -28,7 +28,7 @@ gm convert -gravity south \
     -pointsize 14 \
     -font /usr/share/fonts/TTF/DejaVuSans.ttf \
     -fill white \
-    -draw "text 0,50 '[keyboard is off]'" \
+    -draw "text 0,50 '[keyboard is OFF]'" \
     "$image" "$image"
 
 i3lock -ui "$image" 
