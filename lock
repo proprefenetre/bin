@@ -13,7 +13,7 @@ convert "$image" -scale 10% \
     -fill black \
     -colorize 25% "$image"
 
-[[ -f "$lock_icon" ]] && gm convert "$image" "$lock_icon" \
+[[ -f "$lock_icon" ]] && convert "$image" "$lock_icon" \
     -gravity center \
     -composite "$image"
 
