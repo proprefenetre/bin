@@ -13,16 +13,16 @@ convert "$image" -scale 10% \
     -fill black \
     -colorize 25% "$image"
 
-[[ -f "$lock_icon" ]] && convert "$image" "$lock_icon" \
+[[ -f "$lock_icon" ]] && gm convert "$image" "$lock_icon" \
     -gravity center \
     -composite "$image"
 
-gm convert -gravity south \
-    -pointsize 14 \
-    -font /usr/share/fonts/TTF/DejaVuSans.ttf \
-    -fill white \
-    -draw "text 0,70 '$(date '+%d/%m/%y')'" \
-    "$image" "$image"
+# gm convert -gravity south \
+#     -pointsize 14 \
+#     -font /usr/share/fonts/TTF/DejaVuSans.ttf \
+#     -fill white \
+#     -draw "text 0,70 '$(date '+%d/%m/%y')'" \
+#     "$image" "$image"
 
 [[ $kb_state -eq 0 ]] && gm convert -gravity south \
     -pointsize 14 \
