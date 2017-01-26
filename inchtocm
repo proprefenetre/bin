@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+ONE_INCH="2.54"
+
+[ "$#" -lt 1 ] && echo "Error: not enough inches" && exit 1
+
+echo -n "$(bc <<< "scale=2; $1 * $ONE_INCH")"
+echo " cm"
