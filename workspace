@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+# restore layout for $ws4 and start gvim on that ws
+i3-msg 'workspace 4; append_layout ~/.config/i3/workspace-4.json' >/dev/null && gvim
