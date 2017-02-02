@@ -3,6 +3,7 @@
 tmpdir="/run/user/$UID"
 lock_icon="$HOME/files/pics/lock_round-red.png"
 image="$tmpdir/bg.png"
+# current_bg="$(cat tmpdir/cur_bg)"
 kb_id=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}' | awk -F'=' '{print $2}')
 kb_state=$(xinput list-props $kb_id | grep "Device Enabled" | awk '{print $NF}')
 
@@ -12,7 +13,7 @@ convert "$image" -scale 10% \
     -scale 1000% \
     -fill black \
     -colorize 25% "$image"
-
+#
 [[ -f "$lock_icon" ]] && convert "$image" "$lock_icon" \
     -gravity center \
     -composite "$image"
@@ -32,6 +33,7 @@ convert "$image" -scale 10% \
     "$image" "$image"
 
 i3lock -ui "$image" 
-hsetroot -fill "$(shuf -e $HOME/files/pics/wallpaper/* -n 1)"
+# hsetroot -fill "$(shuf -n 1 -e $HOME/files/pics/wallpaper/*)"
+/home/niels/bin/setbg
 rm "$image"
 

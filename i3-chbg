@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+active_ws=$(i3-msg -t get_workspaces | jq '.[] | select(.focused).num')
+cur_bg=$(cat /run/user/1000/cur_bg)
+
+if [[ $active_ws -eq 4 ]]; then
+    hsetroot -fill $(shuf -n 1 -e ~/files/pics/grey.png)
+else
+    hsetroot -fill $cur_bg
+fi
