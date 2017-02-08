@@ -11,8 +11,7 @@ SELECTION=$(cat $CONFIG | rofi -dmenu)
 
 if [[ ${SELECTION} ]]; then
     printf '%s' "${SELECTION}" | xclip -i -selection clipboard 
-    # 'k' is 'v' on a querty keyboard
-    xdotool search --class --onlyvisible chromium windowfocus key ctrl+k
-    xdotool search --class --onlyvisible chromium windowfocus key tab
+    xdotool search --onlyvisible --class "Chromium" windowfocus key 'ctrl+v'
+    xdotool search --onlyvisible --class "Chromium" windowfocus key 'tab'
 fi
 
