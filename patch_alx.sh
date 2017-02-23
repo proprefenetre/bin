@@ -26,7 +26,7 @@ underline () {
 }
 
 current_kernel=$(uname -r)
-patch="/home/niels/projects/patches/alx-wake-on-lan-linux-3.17.patch"
+patch="./patches/alx-wake-on-lan-linux-4.9.patch"
 target="linux-${current_kernel%%-*}.tar.gz"
 src_dir="$(basename $target .tar.gz)"
 module="drivers/net/ethernet/atheros/alx/alx.ko"

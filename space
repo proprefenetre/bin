@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
-screen_width=$(xrandr | grep "*" | awk '{print $1}' | cut -d'x' -f1)
-screen_heigth=$(xrandr | grep "*" | awk '{print $1}' | cut -d'x' -f2)
-
-x_corner=$(echo "scale=2; 0.25 * $screen_width" | bc)
-
-echo $screen_width x $screen_heigth
-echo $x_corner
+# screen_width=$(xrandr | grep "*" | awk '{print $1}' | cut -d'x' -f1)
+# screen_heigth=$(xrandr | grep "*" | awk '{print $1}' | cut -d'x' -f2)
+#
+# x_corner=$(echo "scale=2; 0.25 * $screen_width" | bc)
+#
+# echo $screen_width x $screen_heigth
+# echo $x_corner
 # restore layout for $ws4 and start gvim on that ws
-# i3-msg 'workspace 4; append_layout ~/.config/i3/workspace-4.json' >/dev/null && gvim
+
+# hsetroot -fill /home/niels/files/pics/grey.png
+
+i3-msg 'append_layout ~/.config/i3/space.json' >/dev/null && gvim

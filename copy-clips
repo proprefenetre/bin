@@ -27,9 +27,10 @@ for dir in ${target_dirs[@]}; do
         for file in "$dir"/*; do
             folder=$(get_date $file)
             fname=$(basename $file)
-            if [[ -d "$dest_dir/$folder" && ! -a "$dest_dir/$folder/$fname" ]]; then 
-                cp "$file" "$dest_dir/$folder/$fname"
-                echo "$file" >> "$dest_dir/$folder/$folder.pls"
+            if [[ -d "$dest_dir/$folder" && ! -a "$dest_dir/$folder/$fname" ]]; then                
+                echo "$dest_dir/$folder"
+                rsync -avz --info=progress "$file" "$dest_dir/$folder/$fname"
+                echo "$fname" >> "$dest_dir/$folder/$folder.pls"
             elif [[ -a "$dest_dir/$folder/$fname" ]]; then
                 # echo "$file already exists at destination";
                 :

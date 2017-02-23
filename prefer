@@ -41,7 +41,7 @@ template_article = """
     Pages={{{pages}}},
     Year={{{year}}},
     Journal={{{journal}}},
-   
+    Number={{{number}}},
 }}
 """
 
