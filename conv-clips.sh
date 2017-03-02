@@ -1,8 +1,9 @@
 #! /usr/bin/env bash
-set -e -u
 
-IFS=$(echo -en "\n\b");
-for i in *.MTS; do
-    fname=$(basename "$i" .MTS)
-    ffmpeg -i "$i" -an "$fname.mp4"
-done
+# IFS=$(echo -en "\n\b");
+# for i in *.MTS; do
+[[ $# -lt 1 ]] && echo "gimme a file" && exit 1
+
+fname=$(basename "$1" .MTS)
+
+ffmpeg -i "$1" -an "$fname.mp4"
