@@ -6,37 +6,30 @@ intern=$(xrandr | grep -i "lvds" | awk '{print $1}')
 
 if [[ $# != 0 ]]; then
     case $1 in
-        --test ) echo "$intern"
-                 echo "$extern"
+        --test ) echo LVDS: "$intern"
+                 echo VGA:  "$extern"
                  ;;
 
-        -l ) xrandr --output "$extern" --rotate left
-             ;;
-        -r ) xrandr --output "$extern" --rotate right
-             ;;
-        # this acts weird. Returning the display back to normal only works 
-        # with with "mhead -n" followed by the xrandr command below ("mhead")
-        -n ) xrandr --output "$extern" --rotate normal
-             ;;
-        -i ) xrandr --output "$extern" --auto --primary --output "$intern" --auto --right-of "$extern"
-             ;;
-        -b ) xrandr --output "$intern" --auto --primary --output "$extern" --auto --right-of "$intern"
-             ;;
-        -o ) xrandr --output "$intern" --auto --output "$extern" --off
-             ;;
-        -e ) xrandr --output "$extern" --auto --output "$intern" --off 
-             ;;
+        -i ) xrandr --output "$intern" --auto --output "$extern" --off ;;
+        -e ) xrandr --output "$extern" --auto --output "$intern" --off ;;
+        -ipr ) xrandr --output "$intern" --auto --primary --output "$extern" \
+            --auto --left-of "$intern" ;;
+        -ipl ) xrandr --output "$intern" --auto --primary --output "$extern" \
+            --auto --right-of "$intern" ;;
+        -epr ) xrandr --output "$extern" --auto --primary --output "$intern" \
+            --auto --left-of "$extern" ;;
+        -epl ) xrandr --output "$extern" --auto --primary --output "$intern" \
+            --auto --right-of "$extern" ;;
 
         * )
             echo "usage:"
-            echo "$0 [-l | -r | -n | -i]"
-            echo "-l:   rotate left"
-            echo "-r:   rotate right"
-            echo "-n:   back to normal"
-            echo "-i:   switch primary/secondary screen"
-            echo "-e:   external monitor is only monitor"
-            echo "-b:   use both monitors; laptop is primary"
-            ;;
+            echo "$0 [-i -e -ip[r l] -ep[r l]]"
+            echo "-i:   use $intern only"
+            echo "-e:   use $extern only"
+            echo "-ip[r l]:   use both; $intern is primary; to the Right or Left
+            of $extern"
+            echo "-ep[r l]:   use both; $extern is primary; to the Right or Left
+            of $intern" ;;
     esac
 else
     if xrandr | grep "$extern disconnected"; then
