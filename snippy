@@ -10,6 +10,9 @@ CONFIG=${HOME}/.snippyrc
 SELECTION=$(cat $CONFIG | rofi -dmenu)
 
 if [[ ${SELECTION} ]]; then
+    if [[ ${SELECTION} == 'today' ]]; then
+        SELECTION=$(date +'%d-%m-%Y')
+    fi
     printf '%s' "${SELECTION}" | xclip -i -selection clipboard 
     xdotool search --onlyvisible --class "Chromium" windowfocus key 'ctrl+v'
     xdotool search --onlyvisible --class "Chromium" windowfocus key 'tab'
