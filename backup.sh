@@ -18,7 +18,7 @@ case $1 in
 
     -r ) sudo rsync -aAXuvS --info=progress --include-from=$include --exclude-from=$exclude /* $TARGET/arch1 2>&1 | tee -a /home/niels/files/rsync-all-$(date +%d%m%Y%H%M%S)
     ;;
-    -m ) sudo rsync -aAxuv --info=progress /home/niels/media/* $TARGET/media/ 2>&1 | tee -a /home/niels/files/rsync-media-$(date +%d%m%Y%H%M%S)
+    -m ) sudo rsync -aAxuv --info=progress /home/niels/files/videos/ $TARGET/media/filmpjes/ 2>&1 | tee -a /home/niels/files/rsync-media-$(date +%d%m%Y%H%M%S)
         ;;
     * ) echo "usage:"
         echo "$0 -d(ry) | -r(eal deal) -m(edia)"
