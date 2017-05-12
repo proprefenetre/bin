@@ -16,18 +16,20 @@ password_files=( "${password_files[@]%.gpg}" )
 
 password=$(printf '%s\n' "${password_files[@]}" | rofi -dmenu)
 
+browser_PID=$(wmctrl -xlp | grep -i "$BROWSER" | awk '{print $3}')
+
 [[ -n $password ]] || exit
 
 if [[ $typeit -eq 0 ]]; then
 
         printf '%s' "${password##*/}" | xclip -i -selection clipboard 
         # xdotool ignores dvorak keymap, except if you load it with setxkbmap
-        xdotool search --onlyvisible --class "Chromium" windowfocus key 'ctrl+v'
+        xdotool search --onlyvisible --pid "$browser_PID" windowfocus key 'ctrl+v'
 
 	pass -c "$password" 2>/dev/null
-        xdotool search --onlyvisible --class "Chromium" windowfocus --sync key 'Tab' 
+        xdotool search --onlyvisible --class "$browser_PID" windowfocus --sync key 'Tab' 
         # but only the first time. Or it has to do with chromium, IDK.
-        xdotool search --onlyvisible --class "Chromium" windowfocus key 'ctrl+v'
+        xdotool search --onlyvisible --class "$browser_PID" windowfocus key 'ctrl+v'
 else
 	pass show "$password" | { read -r pass; printf %s "$pass"; } |
 		xdotool type --clearmodifiers --file -
