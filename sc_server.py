@@ -45,7 +45,9 @@ class TCPHandler(BaseRequestHandler):
             self.request.sendall(bytes(self.data.upper()))
 
 if __name__ == "__main__":
+
     HOST, PORT = "192.168.1.2", 8001
+
     TCPServer.allow_reuse_address = True
     with TCPServer((HOST, PORT), TCPHandler) as server:
         server.serve_forever()
