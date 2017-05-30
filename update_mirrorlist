@@ -11,7 +11,7 @@ echo "Ranking mirrors, this may take a while."
 rankmirrors -n 10 "$new_mirrors" > "$mirrorlist"
 
 
-sed -i "s/^##[a-zA-Z -]*//" "$mirrorlist"
+sed -i "/^##[a-zA-Z -]*/d" "$mirrorlist"
 
 rm "$new_mirrors"
 
