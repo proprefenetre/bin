@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+usage() {
+    echo "usage: $(basename $0) [cmd] [file]"
+    exit 1
+}
+
+[[ ! $# -eq 2 ]] && usage
+
+TMPFILE="$(mktemp)"
+trap "rm -f '$TMPFILE'" 0               # EXIT
+trap "rm -f '$TMPFILE'; exit 1" 2       # INT
+trap "rm -f '$TMPFILE'; exit 1" 1 15    # HUP TERM
+
+cmd="$1"
+file="$2"
+
+cat "$file" >> "$TMPFILE"
+
+ftype=$(file $file | awk '{print $2}')
+case $ftype in
+    Python ) modeline="# vim: ft=python"
+        ;;
+    C ) modeline="// vim: ft=c"
+        ;;
+    Bourne-Again | POSIX ) modeline="# vim: ft=sh"
+        ;;
+    * ) :
+        ;;
+esac
+
+echo "$modeline" >> $TMPFILE
+
+$cmd $TMPFILE
+
