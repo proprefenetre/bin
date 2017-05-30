@@ -21,7 +21,7 @@ for dir in ${target_dirs[@]}; do
         
         for file in "$dir"/*; do
             folder=$(get_date $file)
-            fname=$(basename $file)
+            fname=$(date -r $file +%d-%m-%Y_%H:%M:%S)
             if [[ -d "$dest_dir/$folder" && ! -a "$dest_dir/$folder/$fname" ]]; then                
                 echo "$dest_dir/$folder"
                 # rsync -avz --info=progress "$file" "$dest_dir/$folder/$fname"
