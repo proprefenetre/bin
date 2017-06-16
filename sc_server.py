@@ -9,7 +9,7 @@ import socket
 from socketserver import BaseRequestHandler, TCPServer, ThreadingMixIn
 import subprocess
 import threading
-from urllib.parse import urlparse
+import urllib.parse as parse
 
 BROWSER = "vivaldi-stable"
 LOGFILE = "/home/niels/files/sharecare/threaded_server.log"
@@ -22,12 +22,12 @@ log_handler = logging.FileHandler(filename=LOGFILE, delay=True)
 log_handler.setLevel(logging.DEBUG)
 logger.addHandler(log_handler)
 
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 log_handler.setFormatter(formatter)
 
 
 def validate_url(url):
-    o = urlparse(url)
+    o = parse.urlparse(url)
     if all(o[:2]):
         return True
     else:
@@ -36,8 +36,27 @@ def validate_url(url):
         raise ValueError(msg)
 
 
+def demobilize(url):
+    o = parse.urlparse(url)
+    if not o.netloc.startswith("m."):
+        return url
+    else:
+        nnetloc = o.netloc.replace("m.", "www.")
+        return parse.urlunsplit((o.scheme,
+                                nnetloc,
+                                o.path,
+                                o.query,
+                                o.fragment))
+ 
+
 def x_running():
-    return True if 'DISPLAY' in os.environ else False
+    PID = subprocess.run(["pgrep", "Xorg"], stdout=subprocess.PIPE).stdout
+    if PID is not None:
+        logger.info(f"Xorg: PID {PID} -- X is running")
+        return True
+    else:
+        logger.info(f"X is not running")
+        return False
 
 
 class ThreadedTCPRequestHandler(BaseRequestHandler):
@@ -49,17 +68,16 @@ class ThreadedTCPRequestHandler(BaseRequestHandler):
         if self.data: 
             try:
                 validate_url(url) 
+                url = demobilize(url)
                 if x_running():
                     subprocess.run([BROWSER, f"{url}"], stdout=subprocess.DEVNULL)
                     logger.info(f"Opened \"{url}\" in {BROWSER}")
+                    self.request.sendall(bytes("ACK", "utf-8"))
                 else:
-                    with open(LINKSFILE, 'a') as lf:
-                        lf.write(f"{url}\n")
-                    logger.info(f"saved \"{url}\"")
+                    self.request.sendall(bytes("NOX", "utf-8"))
 
-                self.request.sendall(bytes(self.data.upper()))
             except ValueError:
-                pass
+                logger.error(f"invalid url: {self.data}")
 
 
 class ThreadedTCPServer(ThreadingMixIn, TCPServer):
