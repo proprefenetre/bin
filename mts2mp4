@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+converts .MTS files to .MP4 and cuts out audio
+
+depends on: ffmpeg
+
+input: file containing source and target filenames like this:
+    10-06-2017_11:37:56 --> zondag_vw_mirjam.mp4
+    10-06-2017_11:55:38 --> zondag_vw_jarno_1.mp4
+    10-06-2017_11:56:08 --> zondag_vw_jarno_2.mp4
+"""
+
+from pathlib import Path
+import subprocess
+import sys
+
+def from_file(fname):
+    with open(fname, 'r') as f:
+        for line in f.readlines():
+            src, targ = line.strip().split(" --> ")
+            _convert(src, targ)
+            if Path(targ).exists():
+                subprocess.run(["rm", src], stdout=subprocess.DEVNULL)
+
+
+def from_cli(s, t):
+    _convert(s, t)
+    if Path(t).exists():
+        subprocess.run(["rm", s], stdout=subprocess.DEVNULL)
+
+
+def _convert(s, t):
+    subprocess.run(["primusrun", "ffmpeg", "-i", s, "-an", t], stdout=subprocess.DEVNULL)
+
+
+def usage():
+    print(f"{Path(sys.argv[0]).name} [file] | [src targ]\n\n"
+           "\tfile\tfile containing a list with source and target filenames separated by ' --> '\n\n"
+           "\tsrc targ\ta single source and target")
+
+def main():
+    if len(sys.argv) < 2:
+        usage()
+    elif Path(sys.argv[1]).exists():
+        try:
+            from_cli(sys.argv[1], sys.argv[2])
+        except IndexError:
+            from_file(sys.argv[1])
+    else:
+        usage()
+
+if __name__ == "__main__":
+    main() 
