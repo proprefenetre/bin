@@ -24,9 +24,9 @@ for dir in ${target_dirs[@]}; do
             fname=$(date -r $file +%d-%m-%Y_%H:%M:%S)
             if [[ -d "$dest_dir/$folder" && ! -a "$dest_dir/$folder/$fname" ]]; then                
                 echo "$dest_dir/$folder"
-                # rsync -avz --info=progress "$file" "$dest_dir/$folder/$fname"
-                # echo "$fname" >> "$dest_dir/$folder/$folder.pls"
-                ffmpeg -i "$file" -an "$dest_dir/$folder/${fname/MTS/mp4}"
+                rsync -avz --info=progress "$file" "$dest_dir/$folder/$fname"
+                echo "$fname" >> "$dest_dir/$folder/$folder.pls"
+                # ffmpeg -i "$file" -an "$dest_dir/$folder/${fname/MTS/mp4}"
                 
             elif [[ -a "$dest_dir/$folder/$fname" ]]; then
                 # echo "$file already exists at destination";
