@@ -79,7 +79,6 @@ class ThreadedTCPRequestHandler(BaseRequestHandler):
             except ValueError:
                 logger.error(f"invalid url: {self.data}")
 
-
 class ThreadedTCPServer(ThreadingMixIn, TCPServer):
     pass   
 
