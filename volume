@@ -4,14 +4,10 @@ state=$(amixer get Master | grep -Eo "\[(on|off)\]" | grep -oE "[a-z]+")
 volume=$(amixer get Master | grep -Eo "([0-9]+)%" | grep -oE "[0-9]+")
 
 if [[ $state == 'on' ]]; then
-    if [[ $volume -gt 50 ]]; then
-        icon=""
-    else
-        icon=""
-    fi
-    msg=$volume
+    icon="   "
+    msg="${volume}%"
 else
-    icon=""
+    icon="   "
     msg="muted"
 fi
 

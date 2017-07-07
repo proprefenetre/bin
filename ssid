@@ -15,13 +15,13 @@ case $state in
             echo "   $wlan_ssid "
         else 
             if [[ $(iface "ethernet") == "True" ]]; then
-            echo "   online "
+            echo "   online "
             fi
         fi
         ;;
 
     "idle")
-        echo "   offline "
+        echo "   offline "
         ;;
 esac
 
