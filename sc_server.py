@@ -13,7 +13,6 @@ import urllib.parse as parse
 
 BROWSER = "vivaldi-stable"
 LOGFILE = "/home/niels/files/sharecare/threaded_server.log"
-LINKSFILE = "/home/niels/shared_links"
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -52,10 +51,10 @@ def demobilize(url):
 def x_running():
     PID = subprocess.run(["pgrep", "Xorg"], stdout=subprocess.PIPE).stdout
     if PID is not None:
-        logger.info(f"Xorg: PID {PID} -- X is running")
+        logger.info(f"Xorg: PID {PID.decode().strip()} -- X is running")
         return True
     else:
-        logger.info(f"X is not running")
+        logger.warning(f"X is not running")
         return False
 
 
@@ -72,9 +71,9 @@ class ThreadedTCPRequestHandler(BaseRequestHandler):
                 if x_running():
                     subprocess.run([BROWSER, f"{url}"], stdout=subprocess.DEVNULL)
                     logger.info(f"Opened \"{url}\" in {BROWSER}")
-                    self.request.sendall(bytes("ACK", "utf-8"))
+                    self.request.sendall(bytes("ACK\n", "utf-8"))
                 else:
-                    self.request.sendall(bytes("NOX", "utf-8"))
+                    self.request.sendall(bytes("NOX\n", "utf-8"))
 
             except ValueError:
                 logger.error(f"invalid url: {self.data}")
