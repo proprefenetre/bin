@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 id=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}' | awk -F'=' '{print $2}')
 state=$(xinput list-props $id | grep "Device Enabled" | awk '{print $NF}')
@@ -30,6 +30,7 @@ case $1 in
 
     -f | --off)
             xinput disable "$id"
+            setxkbmap -model $keebmod -layout us -variant $keebvar
             notify-send -a "Keyboard" "Keyboard off"
             echo "$(date) keyboard off" >> /tmp/keeb_log
             ;;
@@ -37,7 +38,7 @@ case $1 in
             xinput enable "$id"
             setxkbmap -model $keebmod -layout us -variant $keebvar
             notify-send -a "Keyboard" "Keyboard on"
-            echo "$(date) keyboard on" >> /tmp/keeb_log
+            echo "$(date) kb on, $keebmod $keebvar" >> /tmp/keeb_log
             ;;
     -dv | --dvorak)  
             setxkbmap -model $keebmod -layout us -variant dvorak-alt-intl 
