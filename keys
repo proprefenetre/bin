@@ -5,7 +5,7 @@ state=$(xinput list-props $id | grep "Device Enabled" | awk '{print $NF}')
 layout=$(setxkbmap -query | grep "variant" | cut -d ' ' -f5 | cut -d'-' -f1)
 
 case $1 in
-    -o | --off) 
+    -t | --toggle) 
             if [ "$state" -eq 1 ]; then
                 xinput disable "$id"
                 notify-send -a "Keyboard" "Keyboard off"
@@ -25,7 +25,7 @@ case $1 in
             setxkbmap -model asus_laptop -layout us -variant alt-intl 
             notify-send -a "Keyboard Layout" "qwerty"
             ;;
-    -t | --test)
+    --test)
             echo "id:       $id"
             echo "state:    $state"
             echo "layout:   $layout"
