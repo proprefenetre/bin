@@ -1,0 +1,59 @@
+#!/bin/bash
+
+id=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}' | awk -F'=' '{print $2}')
+state=$(xinput list-props $id | grep "Device Enabled" | awk '{print $NF}')
+layout=$(setxkbmap -query | grep "variant" | cut -d ' ' -f5 | cut -d'-' -f1)
+
+if [[ $HOSTNAME == "archbook" ]]; then
+    keebmod="chromebook"
+else 
+    keebmod="asus_laptop"
+fi
+
+keebvar="dvorak-alt-intl"
+
+case $1 in
+    -t | --toggle) 
+            if [ "$state" -eq 1 ]; then
+                xinput disable "$id"
+                echo "$(date) keyboard off" >> /tmp/keeb_log
+                notify-send -a "Keyboard" "Keyboard off"
+            else
+                if [ "$state" -eq 0 ]; then
+                    xinput enable "$id"
+                    setxkbmap -model $keebmod -layout us -variant $keebvar
+                    echo "$(date) keyboard on" >> /tmp/keeb_log
+                    notify-send -a "Keyboard" "Keyboard on"
+                fi
+            fi
+            ;;
+
+    -f | --off)
+            xinput disable "$id"
+            setxkbmap -model $keebmod -layout us -variant $keebvar
+            notify-send -a "Keyboard" "Keyboard off"
+            echo "$(date) keyboard off" >> /tmp/keeb_log
+            ;;
+    -n | --on) 
+            xinput enable "$id"
+            setxkbmap -model $keebmod -layout us -variant $keebvar
+            notify-send -a "Keyboard" "Keyboard on"
+            echo "$(date) kb on, $keebmod $keebvar" >> /tmp/keeb_log
+            ;;
+    -dv | --dvorak)  
+            setxkbmap -model $keebmod -layout us -variant dvorak-alt-intl 
+            notify-send -a "Keyboard Layout" "dvorak"
+            ;;
+    -qw | --qwerty)
+            setxkbmap -model $keebmod -layout us -variant alt-intl 
+            notify-send -a "Keyboard Layout" "qwerty"
+            ;;
+    --test)
+            echo "id:       $id"
+            echo "state:    $state"
+            echo "layout:   $layout"
+            echo "model:    $keebmod"
+            echo "variant:  $keebvar"
+        ;;
+esac
+
