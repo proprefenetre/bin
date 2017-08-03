@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# get the MIT license from opensource.org
+curl -s https://opensource.org/licenses/mit | grep "<p>Copyright" -A 18 | sed \
+    -e "s/&lt;YEAR&gt; &lt;COPYRIGHT HOLDER&gt;/$(date +%Y) Cornelis Eigenraam/" \
+    -e "s/<[^>]*>//g" >> "$PWD/LICENSE.md"
