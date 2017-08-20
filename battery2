@@ -1,11 +1,11 @@
 #! /usr/bin/env bash
 
 BAT=${1:-BAT0}
-AC=${1:-AC0}
+AC=$(echo /sys/class/power_supply/* | grep -o "AC*")
 
 state=$(cat /sys/class/power_supply/$BAT/status)
 capacity=$(cat /sys/class/power_supply/$BAT/capacity)
-ac=$(cat /sys/class/power_supply/AC0/online)
+[[ -f /sys/class/power_supply/AC0/online ]] && ac=$(cat /sys/class/power_supply/AC0/online)
 low=10
 
 if [[ $ac -eq 1 ]]; then
