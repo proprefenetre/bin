@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# initialize a project
+
+backupdir="$PWD/.backup"
+swapdir="$PWD/.swap"
+
+# vim backup/swp files
+[[ ! -d "$backupdir" ]] && mkdir "$backupdir"
+[[ ! -d "$swapdir" ]] && mkdir "$swapdir"
+
+# gitignore
+[[ -d "$HOME/.dotfiles" ]] && cp "$HOME/.dotfiles/gitignore" ./.gitignore
+
+# readme
+echo "# $(basename "$PWD")" > "$PWD/README.md"
+
+# license
+curl -s https://opensource.org/licenses/mit | grep "<p>Copyright" -A 18 | sed \
+    -e "s/&lt;YEAR&gt; &lt;COPYRIGHT HOLDER&gt;/$(date +%Y) Cornelis Eigenraam/" \
+    -e "s/<[^>]*>//g" >> "$PWD/LICENSE.md"
