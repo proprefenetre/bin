@@ -1,37 +1,33 @@
-#! /usr/bin/env bash
+#! /usr/bin/bash
 
 BAT=${1:-BAT0}
 
 state=$(cat /sys/class/power_supply/"$BAT"/status)
 capacity=$(cat /sys/class/power_supply/"$BAT"/capacity)
-[[ -f /sys/class/power_supply/AC0/online ]] && ac=$(cat /sys/class/power_supply/AC0/online)
 low=10
 
-if [[ $ac -eq 1 ]]; then
-    case $state in
-        "Charging" ) fa_icon='' ;;
-        "Full" | "Unknown" ) fa_icon='' ;;
-        "Discharging" )
-            if [[ "$capacity" -gt 90 ]]; then
-                fa_icon=''
-            else    
-                if [[ "$capacity" -gt 60 ]]; then
-                    fa_icon=''
+case $state in
+    "Charging" ) fa_icon='';;
+    "Full" | "Unknown" ) fa_icon='' ;;
+    "Discharging" )
+        if [[ "$capacity" -gt 90 ]]; then
+            fa_icon=''
+        else    
+            if [[ "$capacity" -gt 60 ]]; then
+                fa_icon=''
+            else
+                if [[ "$capacity" -gt 40 ]]; then
+                    fa_icon=''
                 else
-                    if [[ "$capacity" -gt 40 ]]; then
-                        fa_icon=''
+                    if [[ "$capacity" -gt 10 ]]; then
+                        fa_icon=''
                     else
-                        if [[ "$capacity" -gt 10 ]]; then
-                            fa_icon=''
-                        else
-                            fa_icon=''
-                        fi
+                        fa_icon=''
                     fi
                 fi
-            fi ;;
-        "*" ) exit 1 ;;
-    esac
-fi
+            fi
+        fi ;;
+esac
 
 echo ' '" $fa_icon  $capacity%"' '
 
