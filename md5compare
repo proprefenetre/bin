@@ -1,18 +1,21 @@
 #!/usr/bin/env bash
 
 usage() {
-    echo "usage: $(basename $0) [file] [md5]"
+    echo "usage: $(basename "$0") [file] [md5]"
     exit 1
 }
 
 
-[[ $# < 2 ]] && usage
+[ $# -lt 2 ] && usage
 
 file=$1
 given_md5=$2
-comp_md5=$(md5sum $file | cut -d' ' -f1)
+comp_md5=$(md5sum "$file" | cut -d' ' -f1)
 
-if [[ $given_md5 == $comp_md5 ]]; then
+echo "$comp_md5 -- $file"
+echo "$given_md5"
+
+if [[ $given_md5 == "$comp_md5" ]]; then
     echo "checksums match"
 else
     echo "WARNING -- Checksums do not match"
