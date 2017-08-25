@@ -8,14 +8,14 @@ usage() {
 [[ ! $# -eq 2 ]] && usage
 
 TMPFILE="$(mktemp)"
-trap 'rm -f $TMPFILE' 0               # EXIT
-trap 'rm -f $TMPFILE; exit 1' 2       # INT
-trap 'rm -f $TMPFILE; exit 1' 1 15    # HUP TERM
+trap "rm -f $TMPFILE" 0               # EXIT
+trap "rm -f $TMPFILE; exit 1" 2       # INT
+trap "rm -f $TMPFILE; exit 1" 1 15    # HUP TERM
 
 cmd="$1"
 file="$2"
 
-cat "$file" >> "$TMPFILE"
+cat "$file" > "$TMPFILE"
 
 ftype=$(file "$file" | awk '{print $2}')
 case $ftype in
@@ -32,3 +32,4 @@ esac
 [[ -n "$modeline" ]] && echo "$modeline" >> "$TMPFILE"
 
 $cmd "$TMPFILE"
+rm -f "$TMPFILE"
