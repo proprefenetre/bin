@@ -40,7 +40,7 @@ if [[ $# != 0 ]]; then
                 break
                 ;;
             -s | --switch)
-                read loc < $ext_loc_file
+                loc=$(< $ext_loc_file)
                 if [ "$loc" = left ]; then
                     xrandr --output "$intern" --auto --output "$extern" --auto --right-of "$intern"
                     echo "right" > "$ext_loc_file"
