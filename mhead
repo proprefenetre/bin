@@ -4,33 +4,60 @@
 extern=$(xrandr | grep -i "vga" | awk '{print $1}')
 intern=$(xrandr | grep -i "lvds" | awk '{print $1}')
 
+usage() {
+    echo "usage:"
+    echo "$(basename "$0") [option]"
+    echo "  -i, --intern    use $intern only"
+    echo "  -e, --extern    use $extern only"
+    echo "  -b, --both:     use both"
+}
+
+ext_loc_file=/tmp/mhead_loc_file
+
+if [ ! -f "$ext_loc_file" ]; then
+    echo "left" > "$ext_loc_file"
+fi
+
 if [[ $# != 0 ]]; then
-    case $1 in
-        --test ) echo LVDS: "$intern"
-                 echo VGA:  "$extern"
-                 ;;
-
-        -i ) xrandr --output "$intern" --auto --output "$extern" --off ;;
-        -e ) xrandr --output "$extern" --auto --output "$intern" --off ;;
-        -ipr ) xrandr --output "$intern" --auto --primary --output "$extern" \
-            --auto --left-of "$intern" ;;
-        -ipl ) xrandr --output "$intern" --auto --primary --output "$extern" \
-            --auto --right-of "$intern" ;;
-        -epr ) xrandr --output "$extern" --auto --primary --output "$intern" \
-            --auto --left-of "$extern" ;;
-        -epl ) xrandr --output "$extern" --auto --primary --output "$intern" \
-            --auto --right-of "$extern" ;;
-
-        * )
-            echo "usage:"
-            echo "$0 [-i -e -ip[r l] -ep[r l]]"
-            echo "-i:   use $intern only"
-            echo "-e:   use $extern only"
-            echo "-ip[r l]:   use both; $intern is primary; to the Right or Left
-            of $extern"
-            echo "-ep[r l]:   use both; $extern is primary; to the Right or Left
-            of $intern" ;;
-    esac
+    while :; do
+        case $1 in
+            -t | --test ) 
+                echo "LVDS: $intern"
+                echo "VGA:  $extern"
+                echo "VGA location: $(cat $ext_loc_file)"
+                exit
+                ;;
+            -i | --intern )
+                xrandr --output "$intern" --auto --output "$extern" --off
+                break
+                ;;
+            -e | --extern )
+                xrandr --output "$extern" --auto --output "$intern" --off
+                break
+                ;;
+            -b | --both)
+                xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
+                break
+                ;;
+            -s | --switch)
+                read loc < $ext_loc_file
+                if [ "$loc" = left ]; then
+                    xrandr --output "$intern" --auto --output "$extern" --auto --right-of "$intern"
+                    echo "right" > "$ext_loc_file"
+                else
+                    xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
+                    echo "left" > "$ext_loc_file"
+                fi
+                break
+                ;;
+            -h | --help )
+                usage
+                exit
+                ;;
+            *) 
+                break
+        esac
+    done
 else
     if xrandr | grep "$extern disconnected"; then
         xrandr --output "$intern" --auto --output "$extern" --off 
