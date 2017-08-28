@@ -1,8 +1,15 @@
 #!/bin/bash
 
+if [ $HOSTNAME = archbook ]; then
+    extern="HDMI1"
+    intern="eDP1"
+else 
+    extern="VGA1"
+    intern="LVDS1"
+fi
 
-extern=$(xrandr | grep -i "vga" | awk '{print $1}')
-intern=$(xrandr | grep -i "lvds" | awk '{print $1}')
+# extern=$(xrandr | grep "$disp" | awk '{print $1}')
+# intern=$(xrandr | grep "lvds" | awk '{print $1}')
 
 usage() {
     echo "usage:"
