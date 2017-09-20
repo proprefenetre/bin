@@ -1,13 +1,11 @@
 #!/bin/bash
 
-while true; do
-    pkgupdates=$(checkupdates | wc -l)
-    aurupdates=$(cower -u | wc -l)
-    num_updates=$(($pkgupdates + $aurupdates))
+pkgupdates=$(checkupdates | wc -l)
+aurupdates=$(cower -u | wc -l)
+num_updates=$((pkgupdates + aurupdates))
 
-    if [[ $num_updates > 0 ]]; then
-        notify-send -a "Updates" "$(printf 'Pkgs: %-s\nAur: %2s' $pkgupdates $aurupdates)" 
-        sleep 1h
-    fi
-done
+if [[ $num_updates -gt 0 ]]; then
+    notify-send -a "Updates" "$(printf 'Pkgs: %-s\nAur: %2s' "$pkgupdates" \
+    "$aurupdates")" 
+fi
 
