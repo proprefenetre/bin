@@ -1,1 +1,27 @@
-/home/niels/Documents/thesis/scripts/ppp.py
+#!/usr/bin/env python3.6
+# -*- coding: utf-8 -*-
+
+# preprocessor; only expands '#include'
+
+import sys
+
+path_inf = sys.argv[1]
+path_outf = sys.argv[2]
+
+with open(path_inf, "r") as inf:
+    lines = inf.readlines()
+
+includes = []
+for idx, l in enumerate(lines):
+    if l.startswith("(include"):
+        includes.append((idx, l.split(" ")[-1].strip('"\n\)')))
+
+for item in includes:
+    idx, path = item
+    print(path)
+    with open(path, 'r') as incf:
+        incf_contents = incf.read()
+    lines[idx] = f"<!-- included from {path} -->\n" + incf_contents
+
+with open(path_outf, "w") as outf:
+    outf.write(''.join(lines))
