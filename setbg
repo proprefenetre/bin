@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-pic=/home/niels/files/pics/wallpaper/16ROTTERDAM2-superJumbo.jpg
+pic=$(shuf -n 1 -e /home/niels/pics/*.jpg)
 
-# $(shuf -n 1 -e /home/niels/files/pics/wallpaper/*)
 tmpf=/run/user/1000/cur_bg
 
 echo $pic > $tmpf
