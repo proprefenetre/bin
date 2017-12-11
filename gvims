@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+# run one instance of gvim only
+
+if [[ $(vim --serverlist) ]]; then
+    if [[ $# -eq 0 ]]; then
+        command gvim --remote-send ":tabnew<cr>"
+    else
+        command gvim --remote-tab-silent "$@"
+    fi
+else
+    command gvim "$@"
+fi

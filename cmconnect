@@ -1,0 +1,11 @@
+#! /usr/bin/bash
+
+if [ $# -gt 1 ]; then
+    ssid=$1
+else
+    ssid="Leiden University"
+fi
+
+nw_hash=$(connmanctl services | grep "$ssid" | awk '{print $3}')
+
+connmanctl connect $nw_hash

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import OrderedDict
-import readline
+import readline # noqa F401
 import string
 import sys
 
@@ -64,19 +64,19 @@ def get_input(t):
 
 
 def halp():
-    return 'Usage: {} [book | article | in]' \
-           '--help'.format(sys.argv[0])
+    return 'Usage: {} [ book | article | incollection ]\n' \
+           '--help'.format(sys.argv[0].split('/')[-1])
 
 
 if __name__ == "__main__":
     try:
         if (sys.argv[1] == '-f'):
-            inp = 2;
+            inp = 2
         else:
-            inp = 1;
+            inp = 1
         entry = get_input(TEMPLATES[sys.argv[inp]])
     except KeyError as e:
-        raise SystemExit('Error: {e} -- no such template\n')
+        raise SystemExit(f'Error: {e} -- no such template\n')
     except IndexError:
         raise SystemExit(halp())
 
