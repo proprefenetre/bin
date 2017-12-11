@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+text="$1"
+sound="/home/niels/sound/beg-your-pardon-sir.mp3"
+
+mpg123 -q $sound
+notify-send -a "reminder" "$text"
