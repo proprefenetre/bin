@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pic=$(shuf -n 1 -e /home/niels/pics/*.jpg)
+pic=$(shuf -n 1 -e /home/niels/pics/wallpapers)
 
 tmpf=/run/user/1000/cur_bg
 
