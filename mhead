@@ -2,7 +2,7 @@
 
 if [ "$HOSTNAME" = archbook ]; then
     extern=$(xrandr | grep -i "hdmi" | awk '{print $1}')
-    intern=$(xrandr | grep -i "dpi" | awk '{print $1}')
+    intern=$(xrandr | grep -i "edp" | awk '{print $1}')
 else 
     extern=$(xrandr | grep -i "vga" | awk '{print $1}')
     intern=$(xrandr | grep -i "lvds" | awk '{print $1}')
