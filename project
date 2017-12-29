@@ -2,6 +2,7 @@
 
 # initialize a project
 
+dotfilesdir="/home/niels/dotfiles"
 backupdir="$PWD/.backup"
 swapdir="$PWD/.swap"
 
@@ -9,15 +10,19 @@ if [ -n "$1" ] && [  "$1" != '-c' ]; then
     printf "usage: %s [-c]\n" "$(basename "$0")"
     printf "\n\t-c\tcopy default makefile & config.mk to PWD\n"
 else
-    cp /home/niels/projects/c/default-{Makefile,config.mk} "$PWD"
+    if [ "$1" = '-c' ]; then
+        cp /home/niels/projects/c/default-{Makefile,config.mk} "$PWD"
+    fi
 fi
 
 # vim backup/swp files
 [ ! -d "$backupdir" ] && mkdir "$backupdir"
 [ ! -d "$swapdir" ] && mkdir "$swapdir"
 
+# git
+[ ! -d "$PWD/.git" ] && git init
 # gitignore
-[ -d "$HOME/.dotfiles" ] && cp "$HOME/.dotfiles/gitignore" ./.gitignore
+[ -d $dotfilesdir ] && cp $dotfilesdir/gitignore ./.gitignore
 
 # readme
 echo "# $(basename "$PWD")" > "$PWD/README.md"
@@ -26,3 +31,6 @@ echo "# $(basename "$PWD")" > "$PWD/README.md"
 curl -s https://opensource.org/licenses/mit | grep "<p>Copyright" -A 18 | sed \
     -e "s/&lt;YEAR&gt; &lt;COPYRIGHT HOLDER&gt;/$(date +%Y) Cornelis Eigenraam/" \
     -e "s/<[^>]*>//g" >> "$PWD/LICENSE"
+
+git add --all
+git commit -m "initial commit"

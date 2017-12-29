@@ -1,27 +1,46 @@
 #!/usr/bin/env python3.6
 # -*- coding: utf-8 -*-
 
-# preprocessor; only expands '#include'
+# preprocessor; only expands '(include ...)' and '(color col ...)'
 
 import sys
 
 path_inf = sys.argv[1]
-path_outf = sys.argv[2]
+try:
+    path_outf = sys.argv[2]
+except Exception:
+    path_outf = path_inf + '.new'
 
 with open(path_inf, "r") as inf:
     lines = inf.readlines()
 
-includes = []
-for idx, l in enumerate(lines):
-    if l.startswith("(include"):
-        includes.append((idx, l.split(" ")[-1].strip('"\n\)')))
 
-for item in includes:
-    idx, path = item
-    print(path)
-    with open(path, 'r') as incf:
-        incf_contents = incf.read()
-    lines[idx] = f"<!-- included from {path} -->\n" + incf_contents
+def include(lines):
+    files = []
+    for idx, l in enumerate(lines):
+        if l.startswith("(include"):
+            files.append((idx, l.split(" ")[-1].strip('"\n\)')))
+    for item in files:
+        idx, path = item
+        with open(path, 'r') as incf:
+            lines[idx] = incf.readlines()
+    return [x for inner in [[item] if not isinstance(item, list) else item for item in lines] for x in inner]
 
-with open(path_outf, "w") as outf:
-    outf.write(''.join(lines))
+
+def colors(lines):
+    color = []
+    for idx, l in enumerate(lines):
+        if l.startswith("(color"):
+            color.append((idx, l.split(" ")[1], ' '.join(l.split(" ")[2:]).strip("\n \)")))
+    for item in color:
+        idx, color, line = item
+        lines[idx] = f"\\textcolor{{{color}}}{{{line}}}"
+    return lines
+
+
+def write(lines, path):
+    with open(path, "w") as outf:
+        outf.write(''.join(lines))
+
+
+write(colors(include(lines)), path_outf)

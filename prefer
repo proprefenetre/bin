@@ -73,6 +73,7 @@ def get_fields(template):
     #                    if fn)
     return {fn: None for _, fn, _, _ in formatter.parse(template) if fn}
 
+
 def get_input(t):
     fields = {k: input('{}: '.format(k)) for k in get_fields(t).keys()}
     return t.format_map(fields)
