@@ -1,16 +1,22 @@
-#!/bin/bash
+#! /usr/bin/env bash
 
 id=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}' | awk -F'=' '{print $2}')
 state=$(xinput list-props $id | grep "Device Enabled" | awk '{print $NF}')
 layout=$(setxkbmap -query | grep "variant" | cut -d ' ' -f5 | cut -d'-' -f1)
 
+keebopt=
+keebvar="dvorak-alt-intl"
+
 if [[ $HOSTNAME == "archbook" ]]; then
     keebmod="chromebook"
+    keebopt="altwin:swap_alt_win"
 else 
     keebmod="asus_laptop"
 fi
 
-keebvar="dvorak-alt-intl"
+activate_keeb () {
+    setxkbmap -model $keebmod -layout us -variant $keebvar -option $keebopt
+}
 
 case $1 in
     -t | --toggle) 
@@ -21,7 +27,7 @@ case $1 in
             else
                 if [ "$state" -eq 0 ]; then
                     xinput enable "$id"
-                    setxkbmap -model $keebmod -layout us -variant $keebvar
+                    activate_keeb
                     echo "$(date) keyboard on" >> /tmp/keeb_log
                     notify-send -a "Keyboard" "Keyboard on"
                 fi
@@ -30,23 +36,23 @@ case $1 in
 
     -f | --off)
             xinput disable "$id"
-            setxkbmap -model $keebmod -layout us -variant $keebvar
             notify-send -a "Keyboard" "Keyboard off"
             echo "$(date) keyboard off" >> /tmp/keeb_log
             ;;
     -n | --on) 
             xinput enable "$id"
-            setxkbmap -model $keebmod -layout us -variant $keebvar
-            notify-send -a "Keyboard" "Keyboard on"
+            activate_keeb
+            notify-send -a "Keyboard" "Keyboard on: $keebmod, $keebvar, $keebopt"
             echo "$(date) kb on, $keebmod $keebvar" >> /tmp/keeb_log
             ;;
     -dv | --dvorak)  
-            setxkbmap -model $keebmod -layout us -variant dvorak-alt-intl 
-            notify-send -a "Keyboard Layout" "dvorak"
+            activate_keeb
+            notify-send -a "Keyboard Layout" "$keebmod, $keebvar, $keebopt"
             ;;
     -qw | --qwerty)
-            setxkbmap -model $keebmod -layout us -variant alt-intl 
-            notify-send -a "Keyboard Layout" "qwerty"
+            keebvar=alt-intl
+            activate_keeb
+            notify-send -a "Keyboard Layout" "qwerty, alt-win swap"
             ;;
     --test)
             echo "id:       $id"
@@ -56,4 +62,6 @@ case $1 in
             echo "variant:  $keebvar"
         ;;
 esac
+
+# setxkbmap -model $keebmod -layout us -variant alt-intl -option $keebopt
 

@@ -9,6 +9,6 @@
 # echo $x_corner
 # restore layout for $ws4 and start gvim on that ws
 
-# hsetroot -fill /home/niels/files/pics/grey.png
+hsetroot -fill /home/niels/pics/wallpapers/molokai-background.png
 
-i3-msg 'append_layout ~/.config/i3/space.json' >/dev/null && gvim
+i3-msg 'append_layout ~/.config/i3/space.json' >/dev/null && gvims
