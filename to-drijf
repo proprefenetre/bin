@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+
+file=$1
+pw=$(pass show stack/drijf)
+
+cadaver <<EOF
+open https://proprefenetre.nl/remote.php/webdav
+drijf
+$pw
+put $file
+exit
+EOF
