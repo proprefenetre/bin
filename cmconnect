@@ -1,11 +1,10 @@
-#! /usr/bin/bash
+#! /usr/bin/env bash
 
-if [ $# -gt 1 ]; then
-    ssid=$1
-else
-    ssid="Leiden University"
+nw=$(connmanctl services | grep "$1")
+
+if [[ -z $nw ]]; then
+    echo "Network '$1' not found - Run 'connmanctl scan wifi' to refresh list"
+    exit 1
 fi
 
-nw_hash=$(connmanctl services | grep "$ssid" | awk '{print $3}')
-
-connmanctl connect $nw_hash
+command connmanctl connect ${nw##* }
