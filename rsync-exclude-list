@@ -1,9 +1,0 @@
-/dev/*
-/proc/*
-/tmp/*
-/run/*
-/sys/*
-/lost+found
-/temp/*
-/mnt/defvol/*
-/media/*
