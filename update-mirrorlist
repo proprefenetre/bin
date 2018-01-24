@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+mirrorlist=/etc/pacman.d/mirrorlist
+new_mirrorlist=/etc/pacman.d/mirrorlist.pacnew
+backup=/etc/pacman.d/mirrorlist.backup
+
+[[ -d "$new_mirrorlist" ]] 
+cp "$new_mirrorlist" "$backup"
+sed -i 's/^#Server/Server/' "$new_mirrorlist"
+
+echo "Ranking mirrors, this may take a while."
+rankmirrors -n 10 "$new_mirrorlist" > "$mirrorlist"
+
+
+sed -i "/^##[a-zA-Z -]*/d" "$mirrorlist"
+
+rm "$new_mirrorlist"
+
+cat "$mirrorlist"
