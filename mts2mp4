@@ -1,9 +1,18 @@
 #! /usr/bin/env bash
 
-# convert MTS videos to mp4
+# convert video files to mp4.
 
-[[ $# -lt 1 ]] && echo "gimme a file" && exit 1
+# usage: mts2mp4 <in> <out> 
 
-fname=$(basename "$1" .MTS)
+(( $# < 2 )) && err "Error: files not found"
 
-ffmpeg -i "$1" -an "$fname.mp4"
+f=$(basename $1)
+
+if [[ -d "$2" ]]; then
+    d=$(readlink -f $2)
+    out="$d/$in.mp4"
+else
+    out="$2.mp4"
+fi
+
+ffmpeg -i "$in" -an "$out"
