@@ -1,46 +1,241 @@
-#!/usr/bin/env python3.6
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# preprocessor; only expands '(include ...)' and '(color col ...)'
-
+import abc
+from pathlib import Path
+import re
 import sys
 
-path_inf = sys.argv[1]
-try:
-    path_outf = sys.argv[2]
-except Exception:
-    path_outf = path_inf + '.new'
 
-with open(path_inf, "r") as inf:
-    lines = inf.readlines()
+class Expression:
+
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self):
+        self.delim = ['( )']
+
+    @property
+    @abc.abstractmethod
+    def key(self):
+        """ key: mandatory attribute """
+        raise NotImplementedError
+
+    @property
+    @abc.abstractmethod
+    def prio(self):
+        """ key: mandatory attribute """
+        raise NotImplementedError
+
+    def expr(self):
+        """ return a compiled regex object that contains the groups 'head' and
+            'body'
+        """
+
+        starts = []
+        ends = []
+        try:
+            for p in self.delim:
+                start, end = p.split()
+                starts.append(f"{re.escape(start)}")
+                ends.append(f"{re.escape(end)}")
+        except ValueError:
+            print(f"<{self.__class__.__name__}: {self.__dict__}>")
+        
+        expr = [rf"({'|'.join(starts)})",
+                rf"(\s*?)",
+                rf"(?P<head>{self.key})",
+                r"\s*",
+                rf"(?P<body>.*?)",
+                r"\s*",
+                rf"({'|'.join(ends)})"]
+
+        return re.compile(''.join(expr), re.M | re.S)
+
+    @abc.abstractmethod
+    def repl(self):
+        """ returns the replacement for body """    
+        raise NotImplementedError
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__}: {self.__dict__}>"
 
 
-def include(lines):
-    files = []
-    for idx, l in enumerate(lines):
-        if l.startswith("(include"):
-            files.append((idx, l.split(" ")[-1].strip('"\n\)')))
-    for item in files:
-        idx, path = item
-        with open(path, 'r') as incf:
-            lines[idx] = incf.readlines()
-    return [x for inner in [[item] if not isinstance(item, list) else item for item in lines] for x in inner]
+class Bold(Expression):
+
+    key = 'b'
+    prio = 0
+
+    def repl(self, m):
+        return f"\\textbf{{{m.group('body')}}}"
 
 
-def colors(lines):
-    color = []
-    for idx, l in enumerate(lines):
-        if l.startswith("(color"):
-            color.append((idx, l.split(" ")[1], ' '.join(l.split(" ")[2:]).strip("\n \)")))
-    for item in color:
-        idx, color, line = item
-        lines[idx] = f"\\textcolor{{{color}}}{{{line}}}"
-    return lines
+class Italics(Expression):
+    
+    key = 'it'
+    prio = 0
+
+    def repl(self, m):
+        return f"\\textit{{{m.group('body')}}}"
 
 
-def write(lines, path):
-    with open(path, "w") as outf:
-        outf.write(''.join(lines))
+class Color(Expression):
+
+    key = 'color'
+    prio = 0
+
+    def repl(self, m):
+        col, line = m.group("body").split(maxsplit=1)
+        return f"\\textcolor{{{col}}}{{{line}}}"
 
 
-write(colors(include(lines)), path_outf)
+class Include(Expression):
+
+    key = 'include'
+    prio = 8
+
+    def repl(self, m):
+        try:
+            return Path(m.group("body")).open().read()
+        except FileNotFoundError:
+            return f"Error: {m.group('body')} - File not Found"
+
+
+class Settings(Expression):
+
+    key = 'settings'
+    prio = 9
+
+    def __init__(self):
+        self.delim = ['<!-- -->']
+ 
+    def repl(self, m):
+        return ""
+    
+    def extract(self, text):
+        settings = {}
+
+        try:
+            data = self.expr().search(text)
+            settings['end'] = data.end()
+        except Exception:
+            raise
+            return settings
+
+        try:
+            for line in data.group("body").splitlines():
+                key, _, body = line.partition(':')
+                settings.setdefault(key.strip(), []).append(body.strip())
+        except Exception:
+            raise
+            key, _, body = data.partition(':')
+            settings.setdefault(key.strip(), []).append(body.strip())
+        return settings
+        
+
+class Macro(Expression):
+
+    prio = 0
+
+    def __init__(self, key, body):
+        self.key = key
+        self.body = body
+    
+    @property
+    def key(self):
+        return self._key
+
+    @key.setter
+    def key(self, v):
+        self._key = v
+
+    def expr(self):
+        return re.compile(rf"(?P<head>{self.key})", re.M | re.S)
+    
+    def repl(self, m):
+        return self.body
+
+
+class Processor:
+
+    """
+    Process expressions like:
+        (color red lorem ipsum dolor sit)
+    """
+    
+    def __init__(self):
+        self._expressions = []
+        self._macros = []
+        self._delim = []
+
+    def settings(self, text):
+        """ extracts a block of settings from the text. """
+        s = Settings()
+        rules = s.extract(text)
+        for k, v in rules.items():
+            if k == "delimiters":
+                self.register_delimiters(*v[0].split(','))
+            if k == "macro":
+                for line in v:
+                    key, body = line.split(maxsplit=1)
+                    self.register(Macro(key, body))
+        return text[rules['end']:]
+
+    def register(self, *expr): 
+        for e in expr:
+            self._expressions.append(e)
+
+    def register_delimiters(self, *delimiters):
+        for m in delimiters:
+            self._delim.append(m)
+        
+    def _substitute(self, expr, text):
+        return expr.expr().sub(expr.repl, text)
+
+    def process(self, text):
+        text = self.settings(text)
+        for e in sorted(self._expressions, key=lambda x: x.prio, reverse=True):
+            try:
+                e.delim.extend(self._delim)
+            except Exception:
+                raise
+                pass
+            text = self._substitute(e, text)
+
+        return text
+
+
+def usage():
+    print(f"Error: file not found\n\nusage: {sys.argv[0]} [file] [file]")
+    sys.exit(1)
+
+
+def get_files():
+    n_args = len(sys.argv)
+    if n_args < 2:
+        usage()
+    elif n_args > 2:
+        inf, outf = sys.argv[1:]
+    else:
+        inf = sys.argv[1]
+        outf = inf
+    return inf, outf
+
+
+if __name__ == "__main__":
+    
+    inf, outf = get_files()
+
+    p = Processor()
+    p.register(Bold(), Include(), Italics(), Color())
+
+    with open(inf, 'r') as i:
+        text = i.read()
+
+    text = p.process(text)
+
+    if inf == outf:
+        with open(f".{inf}~", 'w') as b:
+            b.write(text)
+    
+    with open(outf, 'w') as o:
+        o.write(text)
