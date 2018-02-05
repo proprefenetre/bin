@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
 
-# screen_width=$(xrandr | grep "*" | awk '{print $1}' | cut -d'x' -f1)
-# screen_heigth=$(xrandr | grep "*" | awk '{print $1}' | cut -d'x' -f2)
-#
-# x_corner=$(echo "scale=2; 0.25 * $screen_width" | bc)
-#
-# echo $screen_width x $screen_heigth
-# echo $x_corner
-# restore layout for $ws4 and start gvim on that ws
+dimensions=$(xrandr | grep "*" | awk '{print $1}')
+height=${dimensions#*x}
+width=${dimensions%x*}
 
-hsetroot -fill /home/niels/pics/wallpapers/molokai-background.png
+#x_corner=$(echo "scale=2; 0.25 * $width" | bc)
 
-i3-msg 'append_layout ~/.config/i3/space.json' >/dev/null && gvims
+case $1 in
+    -h ) echo $height
+        ;;
+
+    -w ) echo $width
+        ;;
+
+    * ) hsetroot -fill /home/niels/pics/wallpapers/flattened-dark-bg.png
+        i3-msg 'append_layout ~/.config/i3/space.json' >/dev/null && gvims
+        ;;
+esac
