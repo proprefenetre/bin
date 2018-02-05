@@ -119,7 +119,6 @@ class Settings(Expression):
             settings['end'] = data.end()
         except Exception:
             raise
-            return settings
 
         try:
             for line in data.group("body").splitlines():
@@ -127,8 +126,6 @@ class Settings(Expression):
                 settings.setdefault(key.strip(), []).append(body.strip())
         except Exception:
             raise
-            key, _, body = data.partition(':')
-            settings.setdefault(key.strip(), []).append(body.strip())
         return settings
         
 
@@ -198,7 +195,6 @@ class Processor:
                 e.delim.extend(self._delim)
             except Exception:
                 raise
-                pass
             text = self._substitute(e, text)
 
         return text
@@ -231,11 +227,11 @@ if __name__ == "__main__":
     with open(inf, 'r') as i:
         text = i.read()
 
-    text = p.process(text)
-
     if inf == outf:
         with open(f".{inf}~", 'w') as b:
             b.write(text)
+
+    text = p.process(text)
     
     with open(outf, 'w') as o:
         o.write(text)
