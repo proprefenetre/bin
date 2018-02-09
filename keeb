@@ -9,7 +9,6 @@ keebvar="dvorak-alt-intl"
 
 if [[ $HOSTNAME == "archbook" ]]; then
     keebmod="chromebook"
-    keebopt="altwin:swap_alt_win"
 else 
     keebmod="asus_laptop"
 fi
