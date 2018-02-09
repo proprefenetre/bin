@@ -33,10 +33,13 @@ class Expression:
 
         starts = []
         ends = []
-        for p in self.delim:
-            start, end = p.split()
-            starts.append(f"{re.escape(start)}")
-            ends.append(f"{re.escape(end)}")
+        try:
+            for p in self.delim:
+                start, end = p.split()
+                starts.append(f"{re.escape(start)}")
+                ends.append(f"{re.escape(end)}")
+        except ValueError:
+            print(f"<{self.__class__.__name__}: {self.__dict__}>")
         
         expr = [rf"({'|'.join(starts)})",
                 rf"(\s*?)",
@@ -114,16 +117,15 @@ class Settings(Expression):
         try:
             data = self.expr().search(text)
             settings['end'] = data.end()
-        except:
-            return settings
+        except Exception:
+            raise
 
         try:
             for line in data.group("body").splitlines():
                 key, _, body = line.partition(':')
                 settings.setdefault(key.strip(), []).append(body.strip())
-        except:
-            key, _, body = data.partition(':')
-            settings.setdefault(key.strip(), []).append(body.strip())
+        except Exception:
+            raise
         return settings
         
 
@@ -191,8 +193,8 @@ class Processor:
         for e in sorted(self._expressions, key=lambda x: x.prio, reverse=True):
             try:
                 e.delim.extend(self._delim)
-            except:
-                pass
+            except Exception:
+                raise
             text = self._substitute(e, text)
 
         return text
@@ -215,7 +217,8 @@ def get_files():
     return inf, outf
 
 
-def main():
+if __name__ == "__main__":
+    
     inf, outf = get_files()
 
     p = Processor()
@@ -224,14 +227,11 @@ def main():
     with open(inf, 'r') as i:
         text = i.read()
 
-    with open(f".{inf}~", 'w') as b:
-        b.write(text)
-    
+    if inf == outf:
+        with open(f".{inf}~", 'w') as b:
+            b.write(text)
+
+    text = p.process(text)
     
     with open(outf, 'w') as o:
         o.write(text)
-
-
-if __name__ == "__main__":
-    
-    main()
