@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
-id=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}' | awk -F'=' '{print $2}')
-state=$(xinput list-props $id | grep "Device Enabled" | awk '{print $NF}')
+laptop_kb=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}' | cut -d'=' -f2)
+state=$(xinput list-props $laptop_kb | grep "Device Enabled" | awk '{print $NF}')
 layout=$(setxkbmap -query | grep "variant" | cut -d ' ' -f5 | cut -d'-' -f1)
 
 keebopt=
@@ -9,23 +9,24 @@ keebvar="dvorak-alt-intl"
 
 if [[ $HOSTNAME == "archbook" ]]; then
     keebmod="chromebook"
+    keebopt=ctrl:swap_lwin_lctl
 else 
     keebmod="asus_laptop"
 fi
 
 activate_keeb () {
-    setxkbmap -model $keebmod -layout us -variant $keebvar -option $keebopt
+    setxkbmap -model $keebmod -layout us -variant 'dvorak-alt-intl' -option $keebopt
 }
 
 case $1 in
     -t | --toggle) 
             if [ "$state" -eq 1 ]; then
-                xinput disable "$id"
+                xinput disable "$laptop_kb"
                 echo "$(date) keyboard off" >> /tmp/keeb_log
                 notify-send -a "Keyboard" "Keyboard off"
             else
                 if [ "$state" -eq 0 ]; then
-                    xinput enable "$id"
+                    xinput enable "$laptop_kb"
                     activate_keeb
                     echo "$(date) keyboard on" >> /tmp/keeb_log
                     notify-send -a "Keyboard" "Keyboard on"
@@ -34,12 +35,13 @@ case $1 in
             ;;
 
     -f | --off)
-            xinput disable "$id"
+            xinput disable "$laptop_kb"
+            setxkbmap -model $keebmod -layout us -variant 'dvorak-alt-intl' -option $keebopt
             notify-send -a "Keyboard" "Keyboard off"
             echo "$(date) keyboard off" >> /tmp/keeb_log
             ;;
     -n | --on) 
-            xinput enable "$id"
+            xinput enable "$laptop_kb"
             activate_keeb
             notify-send -a "Keyboard" "Keyboard on: $keebmod, $keebvar, $keebopt"
             echo "$(date) kb on, $keebmod $keebvar" >> /tmp/keeb_log
@@ -54,7 +56,7 @@ case $1 in
             notify-send -a "Keyboard Layout" "qwerty, alt-win swap"
             ;;
     --test)
-            echo "id:       $id"
+            echo "laptop_kb:       $laptop_kb"
             echo "state:    $state"
             echo "layout:   $layout"
             echo "model:    $keebmod"
