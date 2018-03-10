@@ -20,49 +20,53 @@ activate_keeb () {
 
 case $1 in
     -t | --toggle) 
-            if [ "$state" -eq 1 ]; then
-                xinput disable "$laptop_kb"
-                echo "$(date) keyboard off" >> /tmp/keeb_log
-                notify-send -a "Keyboard" "Keyboard off"
-            else
-                if [ "$state" -eq 0 ]; then
-                    xinput enable "$laptop_kb"
-                    activate_keeb
-                    echo "$(date) keyboard on" >> /tmp/keeb_log
-                    notify-send -a "Keyboard" "Keyboard on"
-                fi
+        if [ "$state" -eq 1 ]; then
+            xinput disable "$laptop_kb"
+            echo "$(date) keyboard off" >> /tmp/keeb_log
+            notify-send -a "Keyboard" "Keyboard off"
+        else
+            if [ "$state" -eq 0 ]; then
+                xinput enable "$laptop_kb"
+                activate_keeb
+                echo "$(date) keyboard on" >> /tmp/keeb_log
+                notify-send -a "Keyboard" "Keyboard on"
             fi
-            ;;
+        fi
+        ;;
 
     -f | --off)
-            xinput disable "$laptop_kb"
-            setxkbmap -model $keebmod -layout us -variant 'dvorak-alt-intl' -option $keebopt
-            notify-send -a "Keyboard" "Keyboard off"
-            echo "$(date) keyboard off" >> /tmp/keeb_log
-            ;;
+        xinput disable "$laptop_kb"
+        setxkbmap -model $keebmod -layout us -variant 'dvorak-alt-intl' -option $keebopt
+        notify-send -a "Keyboard" "Keyboard off"
+        echo "$(date) keyboard off" >> /tmp/keeb_log
+        ;;
     -n | --on) 
-            xinput enable "$laptop_kb"
-            activate_keeb
-            notify-send -a "Keyboard" "Keyboard on: $keebmod, $keebvar, $keebopt"
-            echo "$(date) kb on, $keebmod $keebvar" >> /tmp/keeb_log
-            ;;
-    -dv | --dvorak)  
-            activate_keeb
-            notify-send -a "Keyboard Layout" "$keebmod, $keebvar, $keebopt"
-            ;;
+        xinput enable "$laptop_kb"
+        activate_keeb
+        notify-send -a "Keyboard" "Keyboard on: $keebmod, $keebvar, $keebopt"
+        echo "$(date) kb on, $keebmod $keebvar" >> /tmp/keeb_log
+        ;;
+        -dv | --dvorak)  
+        activate_keeb
+        notify-send -a "Keyboard Layout" "$keebmod, $keebvar, $keebopt"
+        ;;
     -qw | --qwerty)
-            keebvar=alt-intl
-            activate_keeb
-            notify-send -a "Keyboard Layout" "qwerty, alt-win swap"
-            ;;
+        keebvar=alt-intl
+        activate_keeb
+        notify-send -a "Keyboard Layout" "qwerty, alt-win swap"
+        ;;
+    -e | --external)
+        keebopt=
+        activate_keeb
+        ;;
     --test)
-            echo "laptop_kb:       $laptop_kb"
-            echo "state:    $state"
-            echo "layout:   $layout"
-            echo "model:    $keebmod"
-            echo "variant:  $keebvar"
+        echo "laptop_kb:       $laptop_kb"
+        echo "state:    $state"
+        echo "layout:   $layout"
+        echo "model:    $keebmod"
+        echo "variant:  $keebvar"
         ;;
 esac
 
-# setxkbmap -model $keebmod -layout us -variant alt-intl -option $keebopt
+
 
