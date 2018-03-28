@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
+#!/usr/bin/env bash
 
 id=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}' | awk -F'=' '{print $2}')
 state=$(xinput list-props $id | grep "Device Enabled" | awk '{print $NF}')
@@ -9,7 +9,7 @@ keebvar="dvorak-alt-intl"
 
 if [[ $HOSTNAME == "archbook" ]]; then
     keebmod="chromebook"
-else 
+else
     keebmod="asus_laptop"
 fi
 
@@ -18,7 +18,7 @@ activate_keeb () {
 }
 
 case $1 in
-    -t | --toggle) 
+    -t | --toggle)
             if [ "$state" -eq 1 ]; then
                 xinput disable "$id"
                 echo "$(date) keyboard off" >> /tmp/keeb_log
@@ -38,19 +38,19 @@ case $1 in
             notify-send -a "Keyboard" "Keyboard off"
             echo "$(date) keyboard off" >> /tmp/keeb_log
             ;;
-    -n | --on) 
+    -n | --on)
             xinput enable "$id"
             activate_keeb
             notify-send -a "Keyboard" "Keyboard on: $keebmod, $keebvar, $keebopt"
             echo "$(date) kb on, $keebmod $keebvar" >> /tmp/keeb_log
             ;;
-    -dv | --dvorak)  
+    -dv | --dvorak)
             activate_keeb
             notify-send -a "Keyboard Layout" "$keebmod, $keebvar, $keebopt"
             ;;
     -qw | --qwerty)
             keebvar=alt-intl
-            activate_keeb
+            ACTIVATE_keeb
             notify-send -a "Keyboard Layout" "qwerty, alt-win swap"
             ;;
     --test)
@@ -59,8 +59,8 @@ case $1 in
             echo "layout:   $layout"
             echo "model:    $keebmod"
             echo "variant:  $keebvar"
+            echo "options:  $keebopt"
         ;;
 esac
 
 # setxkbmap -model $keebmod -layout us -variant alt-intl -option $keebopt
-

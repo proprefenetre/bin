@@ -28,13 +28,12 @@ class Expression:
 
     @abc.abstractmethod
     def repl(self):
-        """ returns the replacement for body """    
+        """ returns the replacement for body """
         raise NotImplementedError
 
     def expr(self):
-        """ return a compiled regex object that contains the groups 'head' and
-            'body'
-        """
+        """ return a compiled regex object that contains the groups
+        'head' and 'body' """
 
         starts = []
         ends = []
@@ -42,9 +41,9 @@ class Expression:
             start, end = p.split()
             starts.append(f"{re.escape(start)}")
             ends.append(f"{re.escape(end)}")
-        
+
         expr = [rf"({'|'.join(starts)})",
-                # rf"(\s*?)",   
+                # rf"(\s*?)",
                 rf"(?P<head>{self.key})",
                 r"\s+",
                 rf"(?P<body>.*?)",
@@ -67,7 +66,7 @@ class Bold(Expression):
 
 
 class Italics(Expression):
-    
+
     key = 'it'
     prio = 0
 
@@ -106,6 +105,15 @@ class Include(Expression):
             return f"Error: {m.group('body')} - File not Found"
 
 
+class Note(Expression):
+
+    key = 'NB'
+    prio = 1
+
+    def repl(self, m):
+        return f"\\marginnote{{{m.group('body')}}}"
+
+
 class Macro(Expression):
 
     prio = 0
@@ -113,7 +121,7 @@ class Macro(Expression):
     def __init__(self, key, body):
         self.key = key
         self.body = body
-    
+
     @property
     def key(self):
         return self._key
@@ -124,7 +132,7 @@ class Macro(Expression):
 
     def expr(self):
         return re.compile(rf"(?P<head>{re.escape(self._key)})", re.M | re.S)
-    
+
     def repl(self, m):
         return self.body
 
@@ -136,10 +144,10 @@ class Settings(Expression):
 
     def __init__(self):
         self.delim = ['<!-- -->']
- 
+
     def repl(self, m):
         return m.groups("body")
-    
+
     def extract(self, text):
         settings = {}
 
@@ -156,23 +164,20 @@ class Settings(Expression):
 
 class Processor:
 
+    """ Process expressions like:
+    (color red lorem ipsum dolor sit)
     """
-    Process expressions like:
-        (color red lorem ipsum dolor sit)
-    """
-    
+
     def __init__(self):
         self._expressions = []
         self._macros = []
         self._delim = []
 
     def settings(self, text):
-
         """ extracts a block of settings from the text. """
-
         rules = Settings().extract(text)
         first_line = 0
-        if rules: 
+        if rules:
             if "delimiters" in rules:
                 line = rules["delimiters"][0].split(',')
                 self.register_delimiters(*[x.strip() for x in line])
@@ -184,21 +189,19 @@ class Processor:
 
         return text[first_line:]    # cuts off the settings block
 
-    def register(self, *expr): 
+    def register(self, *expr):
         for e in expr:
             self._expressions.append(e)
 
     def register_delimiters(self, *delimiters):
-
-        """ 
+        """
         Ik kon niet kiezen dus we nemen ze allemaal!
         (vooral bedoeld voor ingebedde Expressions, maar dat maakt eigenlijk
         niet omdat ze niet matchen zonder key)
         """
-
         for m in delimiters:
             self._delim.append(m)
-        
+
     def _substitute(self, expr, text):
         return expr.expr().sub(expr.repl, text)
 
@@ -220,6 +223,7 @@ def usage():
 
 
 def get_files():
+    """ rudimentary interface """
     n_args = len(sys.argv)
     if n_args < 2:
         usage()
@@ -232,23 +236,15 @@ def get_files():
 
 
 if __name__ == "__main__":
-    
+
     inf, outf = get_files()
-
     p = Processor()
-    p.register(Bold(), Include(), Italics(), Color(), Underline())
-
+    p.register(Bold(), Include(), Italics(), Color(), Underline(), Note())
     with open(inf, 'r') as i:
         text = i.read()
-
     if inf == outf:
         with open(f".{inf}~", 'w') as b:
             b.write(text)
-
     text = p.process(text)
-
     with open(outf, 'w') as o:
         o.write(text)
-
-
-    

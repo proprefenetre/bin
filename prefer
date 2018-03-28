@@ -6,19 +6,6 @@ import readline # noqa F401
 import string
 import sys
 
-yaml_book = """
-- id: {key}
-  type: {book}
-  author:
-  - family: {author_family}
-    given: {author_given}
-    non-dropping-particle: {particles}
-  issued:
-  - year: {year}
-  title: '{title}' 
-  publisher: {publisher}
-  publisher-place: {location}
-"""
 
 template_incollection = """
 @incollection{{{key},
@@ -60,7 +47,6 @@ template_article = """
 """
 
 TEMPLATES = {
-    'yaml_book': yaml_book,
     'book': template_book,
     'article': template_article,
     'incollection': template_incollection,
@@ -69,8 +55,6 @@ TEMPLATES = {
 
 def get_fields(template):
     formatter = string.Formatter()
-    # return OrderedDict((fn, None) for _, fn, _, _ in formatter.parse(template)
-    #                    if fn)
     return {fn: None for _, fn, _, _ in formatter.parse(template) if fn}
 
 
