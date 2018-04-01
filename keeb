@@ -10,7 +10,6 @@ keebvar="dvorak-alt-intl"
 if [[ $HOSTNAME == "archbook" ]]; then
     keebmod="chromebook"
 else
-    keebopt=ctrl:swap_lwin_lctl
     keebmod="asus_laptop"
 fi
 
@@ -19,7 +18,7 @@ activate_keeb () {
 }
 
 case $1 in
-    -t | --toggle) 
+    -t | --toggle)
         if [ "$state" -eq 1 ]; then
             xinput disable "$laptop_kb"
             echo "$(date) keyboard off" >> /tmp/keeb_log
@@ -40,13 +39,13 @@ case $1 in
         notify-send -a "Keyboard" "Keyboard off"
         echo "$(date) keyboard off" >> /tmp/keeb_log
         ;;
-    -n | --on) 
+    -n | --on)
         xinput enable "$laptop_kb"
         activate_keeb
         notify-send -a "Keyboard" "Keyboard on: $keebmod, $keebvar, $keebopt"
         echo "$(date) kb on, $keebmod $keebvar" >> /tmp/keeb_log
         ;;
-        -dv | --dvorak)  
+        -dv | --dvorak)
         activate_keeb
         notify-send -a "Keyboard Layout" "$keebmod, $keebvar, $keebopt"
         ;;
@@ -65,5 +64,8 @@ case $1 in
         echo "layout:   $layout"
         echo "model:    $keebmod"
         echo "variant:  $keebvar"
+        ;;
+    *)
+        echo "missing arguments"
         ;;
 esac
