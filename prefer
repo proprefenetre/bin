@@ -70,19 +70,12 @@ def halp():
 
 if __name__ == "__main__":
     try:
-        if (sys.argv[1] == '-f'):
-            inp = 2
-        else:
-            inp = 1
         entry = get_input(TEMPLATES[sys.argv[inp]])
     except KeyError as e:
         raise SystemExit(f'Error: {e} -- no such template\n')
     except IndexError:
         raise SystemExit(halp())
 
-    if (inp == 2):
-        rfile = 'refs.bib'
-        with open(rfile, 'a') as rf:
-            rf.write(entry)
-    else:
-        print(entry)
+    rfile = 'refs.bib'
+    with open(rfile, 'a') as rf:
+        rf.write(entry)

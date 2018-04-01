@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# convert yaml back to bib
+
+import yaml
+from sys import argv
+
+
+def get_some(fname):
+    with open(fname, 'r') as yamlf:
+        return yaml.load(yamlf)
+
+
+def name_glue(author_list):
+    names = []
+    for auth in author_list:
+        given = auth["given"]
+        if "non-dropping-particle" in auth:
+            given += f" {auth['non-dropping-particle']}"
+        names.append(f"{given} {auth['family']}")
+    return " and ".join(names) if len(names) > 1 else names[0]
+
+
+def key_val(k, v):
+    v = v.strip(' \n"')
+    return f"\t{k}={{{v}}},"
+
+
+CSL_BIB_TYPE_MAP = {
+    'article-journal': 'article',
+    'book': 'book',
+    'chapter': 'incollection',
+}
+
+CSL_BIB_FIELD_MAP = {
+    'author': 'Author',
+    'editor': 'Editor',
+    'title': 'Title',
+    'issued': 'Year',
+    'collection-title': 'Series',
+    'collection-number': 'Number',
+    'issue': 'Number',
+    'page': 'Pages',
+    'publisher': 'Publisher',
+    'publisher-place': 'Location',
+}
+
+BIB_CONTAINER_MAP = {
+    'article': 'Journal',
+    'incollection': 'Booktitle',
+}
+
+
+def convert(entry):
+    bib_entry = []
+    key = entry.pop('id')
+    kind = CSL_BIB_TYPE_MAP[entry.pop('type')]
+    bib_entry.append(f"@{kind}{{{key},")
+    for k, v in entry.items():
+        if k == 'container-title':
+            bib_entry.append(key_val(BIB_CONTAINER_MAP[kind], v))
+        elif k == 'author' or k == 'editor':
+            bib_entry.append(key_val(CSL_BIB_FIELD_MAP[k], name_glue(v)))
+        elif k == 'issued':
+            bib_entry.append(key_val(CSL_BIB_FIELD_MAP[k], v[0]['year']))
+        else:
+            bib_entry.append(key_val(CSL_BIB_FIELD_MAP[k], v))
+    bib_entry.append("}\n\n")
+    return "\n".join(bib_entry)
+
+
+def run():
+    if len(argv) > 3:
+        raise Exception("Too many arguments")
+    elif len(argv) < 3:
+        raise Exception("Not enough arguments")
+
+    file_in, file_out = argv[1:]
+    yaml_source = get_some(file_in)
+
+    with open(file_out, 'w') as outf:
+        for entry in yaml_source['references']:
+            outf.write(convert(entry))
+
+
+if __name__ == "__main__":
+
+    run()
