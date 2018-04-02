@@ -70,7 +70,7 @@ def halp():
 
 if __name__ == "__main__":
     try:
-        entry = get_input(TEMPLATES[sys.argv[inp]])
+        entry = get_input(TEMPLATES[sys.argv[1]])
     except KeyError as e:
         raise SystemExit(f'Error: {e} -- no such template\n')
     except IndexError:
