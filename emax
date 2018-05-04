@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 # use one emacsclient frame
 
-# check whether an Emacs server is already running
+check whether an Emacs server is already running
 pgrep -l "^emacs$" > /dev/null
 
 # otherwise, start Emacs server daemon
@@ -9,5 +9,4 @@ if [ $? -ne 0 ]; then
     emacs &
 fi
 
-echo "$@"
-emacsclient -n $@
+emacsclient -a -n -c "$@"
