@@ -55,7 +55,7 @@ case $1 in
         notify-send -a "Keyboard Layout" "qwerty, alt-win swap"
         ;;
     -e | --external)
-        keebopt=
+        keebopt=ctrl:nocaps
         activate_keeb
         ;;
     --test)
