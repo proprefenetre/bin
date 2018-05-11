@@ -45,7 +45,12 @@ case $1 in
         notify-send -a "Keyboard" "Keyboard on: $keebmod, $keebvar, $keebopt"
         echo "$(date) kb on, $keebmod $keebvar" >> /tmp/keeb_log
         ;;
-        -dv | --dvorak)
+    -dv | --dvorak)
+        activate_keeb
+        notify-send -a "Keyboard Layout" "$keebmod, $keebvar, $keebopt"
+        ;;
+    -dvc | --dvorak-chromebook)
+        keebopt=ctrl:swap_lwin_lctl
         activate_keeb
         notify-send -a "Keyboard Layout" "$keebmod, $keebvar, $keebopt"
         ;;
