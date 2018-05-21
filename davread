@@ -15,7 +15,7 @@ trap "rm -f $TMPFILE; exit 1" 1 15    # HUP TERM
 cmd="$1"
 file="$2"
 
-cat "$file" > "$TMPFILE"
+cp "$file" "$TMPFILE"
 
 ftype=$(file "$file" | awk '{print $2}')
 case $ftype in

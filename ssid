@@ -12,8 +12,8 @@ state="$(connmanctl state | grep "State" | cut -d ' ' -f5)"
 case $state in
     "online" )
         if [[ $(iface "wifi") == "True" ]]; then
-            echo "   $wlan_ssid "
-        else 
+            echo " $wlan_ssid "
+        else
             if [[ $(iface "ethernet") == "True" ]]; then
             echo "   online "
             fi
@@ -24,4 +24,3 @@ case $state in
         echo "   offline "
         ;;
 esac
-
