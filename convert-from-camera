@@ -14,21 +14,18 @@ get_date () {
 
 for dir in ${target_dirs[@]}; do
     if [[ -d "$dir" ]]; then
-        echo "$dir"
         for date in $(stat -c %y $dir/* | cut -d\  -f1 | uniq); do
             [[ ! -d "$date" ]] && mkdir -v -p "$dest_dir/$date"
         done
 
-        for file in "$dir"/*; do
+        for file in "$dir/*"; do
             folder=$(get_date $file)
             fname=$(date -r $file +%d-%m-%Y_%H:%M:%S)
-            if [[ -d "$dest_dir/$folder" && ! -a "$dest_dir/$folder/$fname" ]]; then
-                echo "$dest_dir/$folder"
-                # rsync -avz --info=progress "$file" "$dest_dir/$folder/$fname"
+            if [[ -d "$dest_dir/$folder" ]] && [[ ! -a "$dest_dir/$folder/$fname" ]]; then
                 echo "${fname}.mp4" >> "$dest_dir/$folder/$folder.pls"
                 ffmpeg -i "$file" -an "$dest_dir/$folder/${fname}.mp4"
 
-            elif [[ -a "$dest_dir/$folder/$fnae" ]]; then
+            elif [[ -a "$dest_dir/$folder/$fname" ]]; then
                 # echo "$file already exists at destination";
                 :
             else
