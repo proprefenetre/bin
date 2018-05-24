@@ -1,4 +1,10 @@
 #! /usr/bin/env bash
 # use one emacsclient frame
 
-emacsclient -a -n -c "$@"
+if [[ -z "$DISPLAY" ]] || [[ -n "$SSH_TTY" ]]; then
+    # start new frame on tty
+    emacsclient -a -n -t "$@"
+else
+    # start new graphical frame
+    emacsclient -a -n -c "$@"
+fi
