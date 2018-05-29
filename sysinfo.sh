@@ -18,5 +18,5 @@ Battery () {
 
 while true; do
     echo "S$(Battery)% | $(Clock) "
-    sleep 1
+    sleep 3
 done
