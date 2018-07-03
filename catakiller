@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+playtime=10
+while true; do
+    if [[ $(date +%H%M) -eq 2359 ]]; then # niet zeker of middernacht daadwerkelijk 0000 is
+        playtime=60
+    fi
+    if [[ -n $(pgrep cataclysm) ]]; then
+        echo "$(date +%H:%M): Cataclysm detected, $playtime minutes left"
+        sleep $(( playtime - 5 ))m
+        notify-send -a "Catakiller" "5 minutes left!"
+        sleep 5m
+        killall cataclysm
+        playtime=$(( playtime / 2 ))
+        echo "$(date +%H:%M): Time's up. $playtime minutes left today"
+    fi
+done

@@ -1,11 +1,5 @@
 #!/bin/bash
 
-pkgupdates=$(checkupdates | wc -l)
-aurupdates=$(cower -u | wc -l)
-num_updates=$((pkgupdates + aurupdates))
-
-if [[ $num_updates -gt 0 ]]; then
-    notify-send -a "Updates" "$(printf 'Pkgs: %-s\nAur: %2s' "$pkgupdates" \
-    "$aurupdates")" 
+if [[ $(checkupdates | wc -l) -gt 0 ]]; then
+    notify-send -a "Updates" "$(printf 'Pkgs: %-s\n' "$(checkupdates | wc -l)")"
 fi
-

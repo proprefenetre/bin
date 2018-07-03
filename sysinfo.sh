@@ -9,14 +9,17 @@ Battery () {
     if [[ -z "$(acpi --battery)" ]]; then
         CHARGE="NA"
     else
-        CHARGE="$(acpi --battery | cut -d, -f2)"
+        CHARGE="$(acpi --battery | cut -d, -f2)%"
     fi
 
     echo "$CHARGE"
 }
 
+# Ssid () {
+#     ~/bin/ssid
+# }
 
 while true; do
-    echo "S$(Battery)% | $(Clock) "
+    echo "S$(Battery) | $(Clock) "
     sleep 3
 done
