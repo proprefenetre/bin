@@ -74,6 +74,7 @@ class Italics(Expression):
         return f"\\textit{{{m.group('body')}}}"
 
 
+
 class Color(Expression):
 
     key = 'color'
@@ -83,6 +84,16 @@ class Color(Expression):
         col, line = m.group("body").split(maxsplit=1)
         return f"\\textcolor{{{col}}}{{{line}}}"
 
+
+class Dutch(Expression):
+
+    key = 'du'
+    prio = 0
+
+    def repl(self, m):
+        _, line = m.group("body").split(maxsplit=1)
+        return f"\\textcolor{{orange}}{{{line}}}"
+        
 
 class Underline(Expression):
 

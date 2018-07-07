@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-playtime=10
+playtime=60
 while true; do
     if [[ $(date +%H%M) -eq 2359 ]]; then # niet zeker of middernacht daadwerkelijk 0000 is
         playtime=60
@@ -12,6 +12,6 @@ while true; do
         sleep 5m
         killall cataclysm
         playtime=$(( playtime / 2 ))
-        echo "$(date +%H:%M): Time's up. $playtime minutes left today"
+        echo "$(date +%F %H:%M): Time's up. $playtime minutes left today"
     fi
 done
