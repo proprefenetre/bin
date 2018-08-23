@@ -3,8 +3,9 @@
 if [ "$HOSTNAME" = archbook ]; then
     extern=$(xrandr | grep -i "hdmi" | awk '{print $1}')
     intern=$(xrandr | grep -i "edp" | awk '{print $1}')
-else 
+else
     extern=$(xrandr | grep -i "vga" | awk '{print $1}')
+    ext_status=$(xrandr | grep -i "vga" | awk '{print $2}')
     intern=$(xrandr | grep -i "lvds" | awk '{print $1}')
 fi
 
@@ -22,53 +23,64 @@ if [ ! -f "$ext_loc_file" ]; then
     echo "left" > "$ext_loc_file"
 fi
 
-if [[ $# != 0 ]]; then
-    while :; do
-        case $1 in
-            -t | --test ) 
-                echo "LVDS: $intern"
-                echo "VGA:  $extern"
-                echo "VGA location: $(cat $ext_loc_file)"
-                echo "$extern present"
-                echo "$intern present"
-                exit
-                ;;
-            -i | --intern )
-                xrandr --output "$intern" --auto --output "$extern" --off
-                break
-                ;;
-            -e | --extern )
-                xrandr --output "$extern" --auto --output "$intern" --off
-                break
-                ;;
-            -b | --both)
-                xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
-                break
-                ;;
-            -s | --switch)
-                loc=$(< $ext_loc_file)
-                if [ "$loc" = left ]; then
-                    xrandr --output "$intern" --auto --output "$extern" --auto --right-of "$intern"
-                    echo "right" > "$ext_loc_file"
-                else
-                    xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
-                    echo "left" > "$ext_loc_file"
-                fi
-                break
-                ;;
-            -h | --help )
-                usage
-                exit
-                ;;
-            *) 
-                break
-        esac
-    done
-else
-    if xrandr | grep "$extern disconnected"; then
-        xrandr --output "$intern" --auto --output "$extern" --off 
-    else
-        xrandr --output "$extern" --auto --output "$intern" --off
+use_int () {
+    xrandr --output "$intern" --auto --output "$extern" --off
+    bspc monitor "$intern" -d I II III IV V
+}
 
-    fi        
-fi
+use_ext () {
+    xrandr --output "$extern" --auto --output "$intern" --off
+    bspc monitor "$extern" -d I II III IV V
+}
+
+use_both () {
+    xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
+    bspc monitor "$extern" -d I II III IV V
+    bspc monitor "$intern" -d VI VII VIII IX X
+}
+
+case $1 in
+    -t | --test )
+        echo "LVDS: $intern"
+        echo "VGA:  $extern"
+        echo "VGA location: $(cat $ext_loc_file)"
+        echo "$extern present"
+        echo "$intern present"
+        exit
+        ;;
+    -i | --intern )
+        $(use_intern)
+        ;;
+    -e | --extern )
+        if [[ $(xrandr | grep "$extern disconnected") ]]; then
+            $(use_intern)
+        else
+            $(use_extern)
+        fi
+        ;;
+    -b | --both)
+        $(use_both)
+        ;;
+    -s | --switch)
+        loc=$(< $_loc_file)
+        if [ "$loc" = left ]; then
+            xrandr --output "$intern" --auto --output "$extern" --auto --right-of "$intern"
+            echo "right" > "$ext_loc_file"
+        else
+            xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
+            echo "left" > "$ext_loc_file"
+        fi
+        bspc monitor "$extern" -S "$intern"
+        ;;
+    -h | --help )
+        usage
+        exit
+        ;;
+    *)  
+        if [[ $(xrandr | grep "$extern disconnected") ]]; then
+            $(use_intern)
+        else
+            $(use_both)
+        fi
+        ;;
+esac
