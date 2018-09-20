@@ -1,12 +1,12 @@
 #!/bin/bash
 
 if [ "$HOSTNAME" = archbook ]; then
-    extern=$(xrandr | grep -i "hdmi" | awk '{print $1}')
-    intern=$(xrandr | grep -i "edp" | awk '{print $1}')
+    extern=$(xrandr | awk '/HDMI/ {print $1}')
+    intern=$(xrandr | awk '/EDP/ {print $1}')
 else
-    extern=$(xrandr | grep -i "vga" | awk '{print $1}')
-    ext_status=$(xrandr | grep -i "vga" | awk '{print $2}')
-    intern=$(xrandr | grep -i "lvds" | awk '{print $1}')
+    extern=$(xrandr | awk '/VGA/ {print $1}')
+    ext_status=$(xrandr |  awk '/VGA/ {print $2}')
+    intern=$(xrandr | awk '/LVDS/ {print $1}')
 fi
 
 usage() {
@@ -39,6 +39,18 @@ use_both () {
     bspc monitor "$intern" -d VI VII VIII IX X
 }
 
+use_default() {
+        if [[ $(xrandr | grep "$extern disconnected") ]]; then
+            $(use_int)
+        else
+            $(use_both)
+        fi
+}
+
+if [[ $# -lt 1 ]]; then
+    $(use_default)
+fi
+
 case $1 in
     -t | --test )
         echo "LVDS: $intern"
@@ -49,36 +61,40 @@ case $1 in
         exit
         ;;
     -i | --intern )
-        $(use_intern)
+        $(use_int)
         ;;
     -e | --extern )
         if [[ $(xrandr | grep "$extern disconnected") ]]; then
-            $(use_intern)
+            $(use_int)
         else
-            $(use_extern)
+            $(use_ext)
         fi
         ;;
     -b | --both)
         $(use_both)
         ;;
     -s | --switch)
-        loc=$(< $_loc_file)
-        if [ "$loc" = left ]; then
-            xrandr --output "$intern" --auto --output "$extern" --auto --right-of "$intern"
-            echo "right" > "$ext_loc_file"
+        if [[ $(xrandr | grep "$extern disconnected") ]]; then
+            $(use_int)
         else
-            xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
-            echo "left" > "$ext_loc_file"
+            loc=$(< $_loc_file)
+            if [ "$loc" = left ]; then
+                xrandr --output "$intern" --auto --output "$extern" --auto --right-of "$intern"
+                echo "right" > "$ext_loc_file"
+            else
+                xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
+                echo "left" > "$ext_loc_file"
+            fi
+            bspc monitor "$extern" -S "$intern"
         fi
-        bspc monitor "$extern" -S "$intern"
         ;;
     -h | --help )
         usage
         exit
         ;;
-    *)  
+    *)
         if [[ $(xrandr | grep "$extern disconnected") ]]; then
-            $(use_intern)
+            $(use_int)
         else
             $(use_both)
         fi
