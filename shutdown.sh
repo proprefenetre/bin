@@ -17,4 +17,3 @@ if [ $num_updates -gt 0 ]; then
 fi
 
 /usr/bin/shutdown "$@"
-

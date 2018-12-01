@@ -53,12 +53,8 @@ fi
 
 case $1 in
     -t | --test )
-        echo "LVDS: $intern"
-        echo "VGA:  $extern"
-        echo "VGA location: $(cat $ext_loc_file)"
-        echo "$extern present"
-        echo "$intern present"
-        exit
+        echo "intern: $intern"
+        echo "extern: $extern ($ext_status)"
         ;;
     -i | --intern )
         $(use_int)

@@ -1,0 +1,50 @@
+#!/usr/bin/env sh
+
+function usage {
+    echo "$0: calculate exposure value"
+    echo "    -a, --aperture"
+    echo "    -i, --iso"
+    echo "    -s, --shutter"
+    exit 1
+}
+
+# function log2 {
+#     echo $(echo "scale=2;l($1)/l(2)" | bc -l)
+# }
+
+# function square {
+#     echo $(echo "scale=2; $1^2" | bc)
+# }
+
+# function reciprocal {
+#     echo $(echo "scale=2; 1/$1" | bc)
+# }
+
+
+values=(0,0,0)
+
+while (( "$#" )); do
+    case $1 in
+        -a|--aperture)
+            values[0]=$2
+            shift 2
+            ;;
+        -i|--iso)
+            values[1]=$2
+            shift 2
+            ;;
+        -s|--shutter)
+            values[2]=$2
+            shift 2
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+
+echo ${values[@]}
+
+# EV = log2 ( 100 * aperture² / ( ISO * time ) ) 
+echo "scale=3; l(100 * (${values[0]}^2 / (${values[1]} * (${values[2]})))) / l(2)"
+

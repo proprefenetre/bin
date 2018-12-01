@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 Clock () {
-    DATETIME="$(date "+%a %H:%M")"
+    DATETIME="$(date "+%a %d %b %H:%M")"
     echo "$DATETIME"
 }
 
@@ -15,11 +15,11 @@ Battery () {
     echo "$CHARGE"
 }
 
-# Ssid () {
-#     ~/bin/ssid
-# }
+Ssid () {
+    ~/bin/ssid
+}
 
 while true; do
-    echo "S$(Battery) | $(Clock) "
+    echo "S |$(Ssid)|$(Battery) | $(Clock) "
     sleep 3
 done

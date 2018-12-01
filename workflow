@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WFDIR=~/Projects/workflow/files
+WFDIR=~/projects/workflow/files
 WFREPO=https://github.com/proprefenetre/workflow
 
 # MKFILE=Makefile
@@ -11,11 +11,11 @@ WFREPO=https://github.com/proprefenetre/workflow
 
 
 if [[ $# -eq 0 ]]; then
-    echo "No arguments supplied" 
+    echo "No arguments supplied"
     exit 1
 else
     if [[ ! -d "$WFDIR" ]]; then
-        cd ~/Projects
+        cd ~/projects
         git clone "$WFREPO"
         cd -
     fi
@@ -23,5 +23,5 @@ else
     cd ./$1
     [[ ! -d .git ]] && git init
     cp -r $WFDIR/* .
-    mv project.md ${PWD##*/}.md
+    mv projec.md ${PWD##*/}.md
 fi

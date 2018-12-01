@@ -93,7 +93,7 @@ class Dutch(Expression):
     def repl(self, m):
         _, line = m.group("body").split(maxsplit=1)
         return f"\\textcolor{{orange}}{{{line}}}"
-        
+
 
 class Underline(Expression):
 
@@ -250,7 +250,7 @@ if __name__ == "__main__":
 
     inf, outf = get_files()
     p = Processor()
-    p.register(Bold(), Include(), Italics(), Color(), Underline(), Note())
+    p.register(Bold(), Include(), Italics(), Color(), Underline(), Note(), Dutch())
     with open(inf, 'r') as i:
         text = i.read()
     if inf == outf:

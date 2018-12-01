@@ -108,9 +108,9 @@ misc = {
     '--sources': 'conditional expressions: man bash\n\n' \
                  'positional parameters: http://www.tldp.org/ldp/abs/html\n\n' \
                  'redirection: http://wiki.bash-hackers.org/howto/redirection_tutorial',
-                 
+
     '--help': halp(),
-} 
+}
 
 if __name__ == "__main__":
     c = ChainMap(expressions, misc, pos_params, redirection, syntax)

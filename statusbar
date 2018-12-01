@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+
+while :; do
+    DATETIME="$(date "+%a %d %b %H:%M")"
+
+    CHARGE=""
+    if [[ -z "$(acpi --battery)" ]]; then
+        CHARGE="NA"
+    else
+        CHARGE="$(acpi --battery | grep -Eo "[0-9]{2,3}%")"
+    fi
+
+    IFACE=$(ip route | grep -Po "dev \K[[:alnum:]]+" | head -n 1)
+    if [[ "$IFACE" == "wlp3s0" ]]; then
+        wlan_ssid="$(iw $IFACE link | grep -i 'ssid' | cut -d ' ' -f2-)"
+        if [[ -n "$wlan_ssid" ]]; then
+            IFACE="$wlan_ssid"
+        else
+            IFACE="offline"
+        fi
+    fi
+
+    SOUND=$(amixer get Master | awk '/Mono: .*/{print $4, $NF}' | tr -d '[]')
+    VOL=${SOUND% *}
+    MUTED=${SOUND#* }
+    
+
+    echo "S $VOL ($MUTED) | $IFACE | $CHARGE% | $DATETIME "
+    sleep 1
+done

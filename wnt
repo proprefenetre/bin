@@ -5,6 +5,7 @@ import argparse
 from bs4 import BeautifulSoup
 import re
 import readline
+from shutil import get_terminal_size
 import sys
 import textwrap as tw
 import urllib.parse as up
@@ -12,84 +13,53 @@ from urllib.request import urlopen
 from urllib.error import HTTPError
 
 
-class Word:
-    _fields= ["word", "category", "gender", "sense"]
-    def __init__(self, *args):
-        if len(args) != len(self._fields):
-            raise TypeError('Expected {} arguments'.format(len(self._fields)))
-        for name, value in zip(self._fields, args):
-            setattr(self, name, value)
+class Lemma:
 
-    def __str__(self):
-        sense = "\n          ".join(tw.wrap(self.sense, 80))
-        return f"""
-lemma: {self.word}
-category: {self.category}
-gender:   {self.gender}
-sense:    {sense}
-"""
+    WNT_URL = "http://gtb.ivdnt.org/iWDB/search?actie=results&conc=true&xmlerror=true&lemmodern={}&domein=0&conc=true&wdb=wnt&sensitive=false"
 
+    def __init__(self, word):
+        self.word = word
 
-WNT_URL = "http://wnt.inl.nl/iWDB/search?actie=results&wdb=wnt&xmlerror=true&lemmodern={}&domein=0&conc=true&sensitive=false"
+    def _query(self):
+        return urlopen(self.WNT_URL.format(up.quote(self.word)))
 
-def results(lemma):
-    lemma = up.quote(lemma)
-    try:
-        resp = urlopen(WNT_URL.format(lemma))
-        soup = BeautifulSoup(resp, 'lxml')
-    except HTTPError:
-        print(f"\nusing url: \"{WNT_URL.format(lemma)}\"")
-        raise 
-    return soup.find_all("result")
+    def search(self):
+        results = []
+        soup = BeautifulSoup(self._query(), "lxml")
+        for r in soup.find_all("result"):
+            attrs = r.attrs
+            if "subentry" in attrs:
+                continue
+            else:
+                try: 
+                    ws, g = attrs["woordsoort"].split("(")
+                except:
+                    continue
+                results.append((attrs["lemma"].lower(), re.sub('<[^<]+?>', '', attrs["betekenis"]).strip(), ws, g.strip(")")))
+        return results
+           
 
-
-def italics(mobj):
-    return f"\033[3m{mobj.group(2)}\033[m"
-
-
-def search(lemma):
-    meanings = []
-    for r in results(lemma):
-        pos = r.get("woordsoort").split("(")
-        if len(pos) < 2:
-            cat, gen = pos[0], "n.v.t."
-        else:
-            try:
-                cat, gen = pos
-            except:
-                print(f"\npos: {pos}\n url: {WNT_URL.format(up.quote(lemma))}")
-                raise
-
-        sense = re.sub(r"<(?P<tag>.*?)>(.*?)</(?P=tag)>", italics, r.get("betekenis").strip())
-        sense = re.sub(r"(<.*?>)+[\w[\] ]+(<.*?>)+", " (zie verder wnt.inl.nl)", sense)
-        w = Word(lemma, cat, gen.strip(")"), sense)
-        meanings.append(w)
-    return meanings
-
-
-def lookup(lemma):
-    print(f"\033[4m{lemma}\033[0m")
-    for m in search(lemma):
-        if m.category:
-            print(m)
+def printr(results):
+    for r in results:
+        print(f"\033[1m{r[0]}\033[0m: {r[2]}, {r[3]}\n")
 
 
 def interact():
+
     while True:
         try:
-            lemma = input("> ")
+            query = input("> ")
         except (EOFError, KeyboardInterrupt):
             print("Closing session")
             sys.exit(0)
-        if not lemma:
-            continue
-        lookup(lemma)
+        else:
+            printr(Lemma(query).search())
 
 
 def run():
-    parser = argparse.ArgumentParser(description='Look up words in WNT')
-    parser.add_argument('word', metavar='WORD', type=str, nargs='*')
-    parser.add_argument('-i', '--interactive', action='store_true', help='run \ interactively')
+    parser = argparse.ArgumentParser(description="Look up words in WNT")
+    parser.add_argument("word", metavar="WORD", type=str, nargs='*')
+    parser.add_argument("-i", "--interactive", action="store_true", help="run \ interactively")
 
     args = vars(parser.parse_args()) # returns a dictionary
 
@@ -99,8 +69,10 @@ def run():
         parser.print_help()
         return
     else:
-        lookup(args['word'])
+        printr(Lemma(args['word'][0]).search())
+        
 
 
 if __name__ == "__main__":
     run()
+

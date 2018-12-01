@@ -1,0 +1,23 @@
+#! /bin/sh
+
+#!/bin/sh
+
+wid=$1
+class=$(echo ${2} | xargs)
+instance=$(echo ${3} | xargs)
+title=$(xtitle "$wid")
+
+# Debug
+echo "$(date '+%D %T'): $wid $class $instance $title" >> /tmp/bspc-external-rules
+
+if [ "$instance" = emacs ] ; then
+    echo "                 : $title" >> /tmp/bspc-external-rules
+    case "$title" in
+	scratchmacs)
+	    echo "state=floating"
+	    echo "sticky=on"
+	    echo "                 : state=floating" >> /tmp/bspc-external-rules
+	    echo "                 : sticky=on" >> /tmp/bspc-external-rules
+	    ;;
+    esac
+fi

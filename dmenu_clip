@@ -1,0 +1,16 @@
+#! /usr/bin/bash
+
+# Verify clipster is running, fail otherwise
+clipster -o > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+  echo 'Failed to retrieve history from Clipster, please ensure daemon is running!'
+  exit 1
+fi
+
+# clipster -c -o -n 500 | sed -n -e 's/^\([^\n]\)/\1/p' | dmenu -l 5 | clipster -c
+
+while read -r line
+do
+  printf '%s\n' "$line"
+  echo
+done < <(clipster -c -o -n 500 | sed -n -e 's/^\([^\n]\)/\1/p')

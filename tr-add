@@ -1,11 +1,8 @@
-#! /bin/sh
+#! /usr/bin/env/bash
 
-IFS=$' '
-new_torrent="$1"
+if [[ -z $(pgrep transmission-daemon) ]]; then
+    echo "Starting Transmission-daemon"
+    transmission-daemon
+fi
 
-transmission-remote --add "$new_torrent"
-sleep 3s
-id="$(transmission-remote --list | tail --lines=+2 | grep -v "^Sum\:" | wc -l)"
-transmission-remote --torrent $id --start --verify 
-
-
+transmission-remote --add $(xsel --clipboard)

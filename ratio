@@ -1,0 +1,10 @@
+#! /usr/bin/env bash
+
+if [[ $# -lt 2 ]]; then
+    echo "more arguments!"
+    exit
+fi
+case $3 in
+	--rev) echo $(echo "scale=2; $2/$1 " | bc -l);;
+	*) echo $(echo "scale=2; $1/$2 " | bc -l);;
+esac
