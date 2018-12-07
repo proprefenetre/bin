@@ -67,7 +67,7 @@ class Bold(Expression):
 
 class Italics(Expression):
 
-    key = 'it'
+    key = 'i'
     prio = 0
 
     def repl(self, m):

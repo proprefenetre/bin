@@ -1,8 +1,12 @@
-#! /usr/bin/env/bash
+#! /usr/bin/env bash
 
-if [[ -z $(pgrep transmission-daemon) ]]; then
-    echo "Starting Transmission-daemon"
+if [[ -z $(pgrep transmission-da) ]]; then
     transmission-daemon
+    echo "Starting Transmission-daemon, please hold"
+    sleep 2s
+    echo "tick tock ..."
+    sleep 2s
+    echo "not funny, is it?"
 fi
 
-transmission-remote --add $(xsel --clipboard)
+transmission-remote --add "$(xsel --clipboard)"

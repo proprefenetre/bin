@@ -3,11 +3,8 @@
 id=$(xdotool search --limit 1 --name "scratchmacs")
 
 if [ -z "$id" ]; then
-    emacsclient --alternate-editor="" \
-                --no-wait \
-		--create-frame \
-		--frame-parameters='(quote (name . "scratchmacs"))' \
-		"/home/niels/org/todo.org" &
+    emax --frame-parameters='(quote (name . "scratchmacs"))' \
+         "/home/niels/org/todo.org" &
     id=$(xdotool search --limit 1 --name "scratchmacs")
 fi
 
