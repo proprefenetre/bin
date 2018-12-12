@@ -32,8 +32,7 @@ class Expression:
         raise NotImplementedError
 
     def expr(self):
-        """ return a compiled regex object that contains the groups
-        'head' and 'body' """
+        """ return a compiled regex object that contains the groups 'head' and 'body' """
 
         starts = []
         ends = []
@@ -74,7 +73,6 @@ class Italics(Expression):
         return f"\\textit{{{m.group('body')}}}"
 
 
-
 class Color(Expression):
 
     key = 'color'
@@ -83,16 +81,6 @@ class Color(Expression):
     def repl(self, m):
         col, line = m.group("body").split(maxsplit=1)
         return f"\\textcolor{{{col}}}{{{line}}}"
-
-
-class Dutch(Expression):
-
-    key = 'du'
-    prio = 0
-
-    def repl(self, m):
-        _, line = m.group("body").split(maxsplit=1)
-        return f"\\textcolor{{orange}}{{{line}}}"
 
 
 class Underline(Expression):
@@ -124,6 +112,35 @@ class Note(Expression):
     def repl(self, m):
         return f"\\marginnote{{{m.group('body')}}}"
 
+
+class Dutch(Expression):
+    key ='du'
+    prio = 0
+
+    def repl(self, m):
+        return f"\\textcolor{{orange}}{{{m.group('body')}}}"
+
+
+class Red(Expression):
+    key = "red"
+    prio = 0
+
+    def repl(self, m):
+        return f"\\textcolor{{red}}{{{m.group('body')}}}"
+
+class Blue(Expression):
+    key = "blue"
+    prio = 0
+
+    def repl(self, m):
+        return f"\\textcolor{{blue}}{{{m.group('body')}}}"
+
+class Green(Expression):
+    key = "green"
+    prio = 0
+
+    def repl(self, m):
+        return f"\\textcolor{{green}}{{{m.group('body')}}}"
 
 class Macro(Expression):
 
@@ -208,7 +225,7 @@ class Processor:
         """
         Ik kon niet kiezen dus we nemen ze allemaal!
         (vooral bedoeld voor ingebedde Expressions, maar dat maakt eigenlijk
-        niet omdat ze niet matchen zonder key)
+        niet uit omdat ze niet matchen zonder key)
         """
         for m in delimiters:
             self._delim.append(m)
@@ -249,13 +266,24 @@ def get_files():
 if __name__ == "__main__":
 
     inf, outf = get_files()
+
     p = Processor()
-    p.register(Bold(), Include(), Italics(), Color(), Underline(), Note(), Dutch())
+    p.register(Bold(),
+               Include(),
+               Italics(),
+               Color(),
+               Underline(),
+               Note(),
+               Dutch())
+
     with open(inf, 'r') as i:
         text = i.read()
+
     if inf == outf:
         with open(f".{inf}~", 'w') as b:
             b.write(text)
+
     text = p.process(text)
+
     with open(outf, 'w') as o:
         o.write(text)
