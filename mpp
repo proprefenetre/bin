@@ -128,6 +128,15 @@ class Red(Expression):
     def repl(self, m):
         return f"\\textcolor{{red}}{{{m.group('body')}}}"
 
+
+class Bred(Expression):
+    key = "bred"
+    prio = 0
+
+    def repl(self, m):
+        return f"\\textcolor{{red}}{{\\textbf{{{m.group('body')}}}}}"
+
+
 class Blue(Expression):
     key = "blue"
     prio = 0
@@ -135,12 +144,14 @@ class Blue(Expression):
     def repl(self, m):
         return f"\\textcolor{{blue}}{{{m.group('body')}}}"
 
+
 class Green(Expression):
     key = "green"
     prio = 0
 
     def repl(self, m):
         return f"\\textcolor{{green}}{{{m.group('body')}}}"
+
 
 class Macro(Expression):
 
@@ -217,9 +228,9 @@ class Processor:
 
         return text[first_line:]    # cuts off the settings block
 
-    def register(self, *expr):
+    def register(self, expr):
         for e in expr:
-            self._expressions.append(e)
+            self._expressions.append(e())
 
     def register_delimiters(self, *delimiters):
         """
@@ -265,16 +276,12 @@ def get_files():
 
 if __name__ == "__main__":
 
+    expressions = [Bold, Include, Italics, Color, Underline, Note,
+                   Green, Blue, Red, Bred]
     inf, outf = get_files()
 
     p = Processor()
-    p.register(Bold(),
-               Include(),
-               Italics(),
-               Color(),
-               Underline(),
-               Note(),
-               Dutch())
+    p.register(expressions)
 
     with open(inf, 'r') as i:
         text = i.read()

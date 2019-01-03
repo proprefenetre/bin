@@ -1,5 +1,0 @@
-#! /usr/bin/env bash
-# use one emacsclient frame
-
-emacs --daemon="EMAX"
-emacsclient --create-frame --no-wait --socket-name="EMAX" "$@"
