@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+# submit exercise to exercism.io and remove node_modules/
+exercism submit $@
+
+if [[ -d ./node_modules ]] ; then
+    read -t 10 -n 1 -p "delete node_modules? Y/n: " answer
+
+    [[ -z "$answer" ]] && answer="Y"  # default choice
+    case ${answer:0:1} in
+        y|Y )
+            echo
+            rm -r ./node_modules
+            ;;
+        * )
+            echo
+            ;;
+    esac
+fi

@@ -2,11 +2,7 @@
 
 if [[ -z $(pgrep transmission-da) ]]; then
     transmission-daemon
-    echo "Starting Transmission-daemon, please hold"
-    sleep 2s
-    echo "tick tock ..."
-    sleep 2s
-    echo "not funny, is it?"
+    echo "Starting Transmission-daemon"
 fi
 
 transmission-remote --add "$(xsel --clipboard)"

@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
 mirrorlist=/etc/pacman.d/mirrorlist
-new_mirrorlist=/etc/pacman.d/mirrorlist.pacnew
 backup=/etc/pacman.d/mirrorlist.backup
+if [[ ! -f /etc/pacman.d/mirrorlist.pacnew ]]; then
+    curl -o /etc/pacman.d/mirrorlist.pacnew "https://www.archlinux.org/mirrorlist/?ip_version=6"
+fi
+new_mirrorlist=/etc/pacman.d/mirrorlist.pacnew
 
-[[ -d "$new_mirrorlist" ]] 
-cp "$new_mirrorlist" "$backup"
+cp -v "$new_mirrorlist" "$backup"
+
 sed -i 's/^#Server/Server/' "$new_mirrorlist"
 
 echo "Ranking mirrors, this may take a while."
 rankmirrors -n 10 "$new_mirrorlist" > "$mirrorlist"
-
 
 sed -i "/^##[a-zA-Z -]*/d" "$mirrorlist"
 

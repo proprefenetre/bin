@@ -1,8 +1,4 @@
-#!/bin/bash
-
-# strict mode:
-set -e -u
-
+##!/usr/bin/env bash
 
 pip install --upgrade pip
 
