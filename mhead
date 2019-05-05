@@ -2,7 +2,8 @@
 
 if [ "$HOSTNAME" = archbook ]; then
     extern=$(xrandr | awk '/HDMI/ {print $1}')
-    intern=$(xrandr | awk '/EDP/ {print $1}')
+    ext_status=$(xrandr |  awk '/HDMI/ {print $2}')
+    intern=$(xrandr | awk '/eDP/ {print $1}')
 else
     extern=$(xrandr | awk '/VGA/ {print $1}')
     ext_status=$(xrandr |  awk '/VGA/ {print $2}')
