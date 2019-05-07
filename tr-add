@@ -3,6 +3,11 @@
 if [[ -z $(pgrep transmission-da) ]]; then
     transmission-daemon
     echo "Starting Transmission-daemon"
+    sleep 5s
 fi
 
-transmission-remote --add "$(xsel --clipboard)"
+if [[ $# -lt 1 ]]; then
+    transmission-remote --add "$(xsel --clipboard)"
+else
+    transmission-remote --add $1
+fi
