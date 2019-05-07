@@ -1,7 +1,10 @@
 #! /usr/bin/env bash
 
-
 wid=$(bspc query -N -n)
+
+winmove () {
+    xdotool windowmove --sync $wid $1 $2
+}
 
 unset screenx screeny
 eval $(xdpyinfo | sed -n -e 's/^ \+dimensions: \+\([0-9]\+\)x\([0-9]\+\).*/screenx=\1; screeny=\2/p')
@@ -11,23 +14,39 @@ eval $(xwininfo -id $wid|
 sed -n -e "s/^ \+Width: \+\([0-9]\+\).*/windowx=\1/p" \
        -e "s/^ \+Height: \+\([0-9]\+\).*/windowy=\1/p" )
 
-newx=$(echo "($screenx - $windowx)/2" | bc)
-newy=$(echo "($screeny - $windowy)/2" | bc)
+CENTER_X=$(echo "($screenx - $windowx)/2" | bc)
+CENTER_Y=$(echo "($screeny - $windowy)/2" | bc)
+LEFT=3
+RIGHT=$(( screenx - windowx - 3 ))
+UPPER=3
+LOWER=$(( screeny - windowy - 3 ))
 
 case "$1" in
     -ul)
-	    xdotool windowmove --sync $wid 3 3
+	    winmove $LEFT $UPPER 
 	    ;;
     -ll)
-	    xdotool windowmove --sync $wid 3 $(( screeny - windowy - 3 ))
+	    winmove $LEFT $LOWER
 	    ;;
     -ur)
-	    xdotool windowmove --sync $wid $(( screenx - windowx - 3 )) 3
+        winmove $RIGHT $UPPER
 	    ;;
     -lr)
-	    xdotool windowmove --sync $wid $(( screenx - windowx - 3 )) $(( screeny - windowy - 3 ))
+        winmove $RIGHT $LOWER
 	    ;;
-    -c)
-	    xdotool windowmove --sync $wid $newx $newy
+    -c | --center)
+	    winmove $CENTER_X $CENTER_Y
 	    ;;
+    -u | --up)
+        winmove $CENTER_X $UPPER
+        ;;
+    -d | --down)
+        winmove $CENTER_X $LOWER
+        ;;
+    -l | --left)
+        winmove $UPPER $CENTER_Y
+        ;;
+    -r | --right)
+        winmove $RIGHT $CENTER_Y
+        ;;
 esac

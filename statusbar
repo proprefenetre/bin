@@ -21,11 +21,11 @@ while :; do
         fi
     fi
 
-    SOUND=$(amixer get Master | awk '/Mono: .*/{print $4, $NF}' | tr -d '[]')
-    VOL=${SOUND% *}
-    MUTED=${SOUND#* }
+#    SOUND=$(amixer | awk '/Mono: .*/{print $4, $NF}' | head -n 1 | tr -d '[]')
+#    VOL=${SOUND% *}
+#    MUTED=${SOUND#* }
     
 
-    echo "S $VOL ($MUTED) | $IFACE | $CHARGE% | $DATETIME "
+    echo "S  $IFACE | $CHARGE% | $DATETIME "
     sleep 1
 done
