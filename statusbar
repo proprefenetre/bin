@@ -21,11 +21,15 @@ while :; do
         fi
     fi
 
-#    SOUND=$(amixer | awk '/Mono: .*/{print $4, $NF}' | head -n 1 | tr -d '[]')
-#    VOL=${SOUND% *}
-#    MUTED=${SOUND#* }
-    
+    if [[ $HOSTNAME = "PFN" ]]; then
+        SOUND=$(amixer | awk '/Mono: .*/{print $4, $NF}' | head -n 1 | tr -d '[]')
+        VOL=${SOUND% *}
+        MUTED=${SOUND#* }
+        LINE="S $MUTED ($VOL) | $IFACE | $CHARGE% | $DATETIME "
+    else
+        LINE="S $IFACE | $CHARGE% | $DATETIME "
+    fi 
 
-    echo "S  $IFACE | $CHARGE% | $DATETIME "
+    echo $LINE
     sleep 1
 done
