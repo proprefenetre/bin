@@ -4,6 +4,36 @@ laptop_kb=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}'
 state=$(xinput list-props $laptop_kb | grep "Device Enabled" | awk '{print $NF}')
 layout=$(setxkbmap -query | grep "variant" | cut -d ' ' -f5 | cut -d'-' -f1)
 
+default () {
+    setxkbmap -model pc104 \
+       	      -layout us \
+	          -variant dvorak-alt-intl \
+              -option \
+ 	          -option terminate:ctrl_alt_bksp \
+	          -option compose:rctrl
+}
+
+archbook () {
+    setxkbmap -model chromebook \
+       	      -layout us \
+	          -variant dvorak-alt-intl \
+              -option \
+ 	          -option terminate:ctrl_alt_bksp \
+	          -option compose:rctrl \
+ 	          -option ctrl:swap_lwin_lctl
+}
+
+set_keeb () {
+    case $HOSTNAME in
+        PFN)
+            $(default)
+            ;;
+        archbook)
+            $(archbook)
+            ;;
+    esac
+}
+
 case $1 in
     -t | --toggle)
         if [ "$state" -eq 1 ]; then
@@ -11,13 +41,14 @@ case $1 in
         else
             if [ "$state" -eq 0 ]; then
                 xinput enable "$laptop_kb"
-                setxkbmap -model chromebook \
+                setxkbmap -model $MODEL \
        	                  -layout us \
 	                      -variant dvorak-alt-intl \
                           -option \
  	                      -option terminate:ctrl_alt_bksp \
 	                      -option compose:rctrl \
  	                      -option ctrl:swap_lwin_lctl
+                notify-send "keeb" "dvorak ON"
             fi
         fi
         ;;
@@ -27,7 +58,7 @@ case $1 in
         ;;
     -n | --on)
         xinput enable "$laptop_kb"
-        setxkbmap -model chromebook \
+        setxkbmap -model $MODEL \
        	          -layout us \
 	              -variant dvorak-alt-intl \
                   -option \
@@ -43,7 +74,16 @@ case $1 in
  	              -option terminate:ctrl_alt_bksp \
 	              -option compose:rctrl
         ;;
+    -q | --qwerty)
+        setxkbmap -model $MODEL \
+       	          -layout us \
+	              -variant alt-intl \
+                  -option \
+ 	              -option terminate:ctrl_alt_bksp \
+	              -option compose:rctrl
+        ;;
     *)
+        $(set_keeb)
         setxkbmap -query
         ;;
 esac
