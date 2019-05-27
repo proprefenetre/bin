@@ -1,49 +1,67 @@
 #!/usr/bin/env bash
 
-laptop_kb=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}' | cut -d'=' -f2)
-state=$(xinput list-props $laptop_kb | grep "Device Enabled" | awk '{print $NF}')
-layout=$(setxkbmap -query | grep "variant" | cut -d ' ' -f5 | cut -d'-' -f1)
+laptop_keeb=$(xinput list | sed -n -e 's/.*AT Translated Set 2 keyboard\s\+id=\([0-9]\+\).*/\1/p')
+state=$(xinput list-props $laptop_keeb | grep "Device Enabled" | awk '{print $NF}')
+
 
 case $1 in
     -t | --toggle)
         if [ "$state" -eq 1 ]; then
-            xinput disable "$laptop_kb"
+            xinput disable "$laptop_keeb"
         else
             if [ "$state" -eq 0 ]; then
-                xinput enable "$laptop_kb"
+                xinput enable "$laptop_keeb"
                 setxkbmap -model chromebook \
-       	                  -layout us \
-	                      -variant dvorak-alt-intl \
+                          -layout us \
+                          -variant dvorak-alt-intl \
                           -option \
- 	                      -option terminate:ctrl_alt_bksp \
-	                      -option compose:rctrl \
- 	                      -option ctrl:swap_lwin_lctl
+                          -option terminate:ctrl_alt_bksp \
+                          -option compose:rctrl \
+                          -option ctrl:swap_lwin_lctl
             fi
         fi
         ;;
 
     -f | --off)
-        xinput disable "$laptop_kb"
+        xinput disable "$laptop_keeb"
         ;;
     -n | --on)
-        xinput enable "$laptop_kb"
+        xinput enable "$laptop_keeb"
         setxkbmap -model chromebook \
-       	          -layout us \
-	              -variant dvorak-alt-intl \
+                  -layout us \
+                  -variant dvorak-alt-intl \
                   -option \
- 	              -option terminate:ctrl_alt_bksp \
-	              -option compose:rctrl \
- 	              -option ctrl:swap_lwin_lctl
+                  -option terminate:ctrl_alt_bksp \
+                  -option compose:rctrl \
+                  -option ctrl:swap_lwin_lctl
         ;;
     -e | --external)
         setxkbmap -model pc104 \
-       	          -layout us \
-	              -variant dvorak-alt-intl \
+                  -layout us \
+                  -variant dvorak-alt-intl \
                   -option \
- 	              -option terminate:ctrl_alt_bksp \
-	              -option compose:rctrl
+                  -option terminate:ctrl_alt_bksp \
+                  -option compose:rctrl
+        ;;
+    -q | --query)
+        setxkbmap -query
         ;;
     *)
-        setxkbmap -query
+        if [[ -n $(xinput list | grep "USB Keyboard") ]]; then
+            setxkbmap -model pc104 \
+                      -layout us \
+                      -variant dvorak-alt-intl \
+                      -option \
+                      -option terminate:ctrl_alt_bksp \
+                      -option compose:rctrl
+        else
+            setxkbmap -model chromebook \
+                      -layout us \
+                      -variant dvorak-alt-intl \
+                      -option \
+                      -option terminate:ctrl_alt_bksp \
+                      -option compose:rctrl \
+                      -option ctrl:swap_lwin_lctl
+        fi
         ;;
 esac
