@@ -1,8 +1,0 @@
-#! /usr/bin/env bash
-
-keebmod=asus-laptop
-keebvar=dvorak-alt-intl
-
-setxkbmap -model $keebmod -layout us -variant $keebvar
-
-touch /tmp/keeb_udev_ran
