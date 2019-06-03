@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$HOSTNAME" = archbook ]; then
+if [ "$HOSTNAME" = di-huc-knaw ]; then
     extern=$(xrandr | awk '/HDMI/ {print $1}')
     ext_status=$(xrandr |  awk '/HDMI/ {print $2}')
     intern=$(xrandr | awk '/eDP/ {print $1}')
