@@ -49,4 +49,7 @@ case "$1" in
     -r | --right)
         winmove $RIGHT $CENTER_Y
         ;;
+    -n | --custom ) 
+        winmove $1 $2
+        ;;
 esac

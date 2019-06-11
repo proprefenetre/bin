@@ -1,1 +1,10 @@
-systemctl --user start emacs.service
+#! /usr/bin/env bash
+
+case $1 in
+    -r|--restart)
+        systemctl --user restart emacs.service
+        ;;
+    *)
+        systemctl --user start emacs.service
+        ;;
+esac

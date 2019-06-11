@@ -31,13 +31,14 @@ class Lemma:
             if "subentry" in attrs:
                 continue
             else:
-                try: 
+                try:
                     ws, g = attrs["woordsoort"].split("(")
                 except:
                     continue
-                results.append((attrs["lemma"].lower(), re.sub('<[^<]+?>', '', attrs["betekenis"]).strip(), ws, g.strip(")")))
+                # results.append((attrs["lemma"].lower(), re.sub('<[^<]+?>', '', attrs["betekenis"]).strip(), ws, g.strip(")")))
+                results.append((attrs["lemma"].lower(), attrs["betekenis"], ws, g.strip(")")))
         return results
-           
+
 
 def printr(results):
     for r in results:
@@ -70,9 +71,7 @@ def run():
         return
     else:
         printr(Lemma(args['word'][0]).search())
-        
 
 
 if __name__ == "__main__":
     run()
-

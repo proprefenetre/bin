@@ -4,36 +4,6 @@ laptop_keeb=$(xinput list | sed -n -e 's/.*AT Translated Set 2 keyboard\s\+id=\(
 state=$(xinput list-props $laptop_keeb | grep "Device Enabled" | awk '{print $NF}')
 
 
-default () {
-    setxkbmap -model pc104 \
-       	      -layout us \
-	          -variant dvorak-alt-intl \
-              -option \
- 	          -option terminate:ctrl_alt_bksp \
-	          -option compose:rctrl
-}
-
-archbook () {
-    setxkbmap -model chromebook \
-       	      -layout us \
-	          -variant dvorak-alt-intl \
-              -option \
- 	          -option terminate:ctrl_alt_bksp \
-	          -option compose:rctrl \
- 	          -option ctrl:swap_lwin_lctl
-}
-
-set_keeb () {
-    case $HOSTNAME in
-        PFN)
-            $(default)
-            ;;
-        archbook)
-            $(archbook)
-            ;;
-    esac
-}
-
 case $1 in
     -t | --toggle)
         if [ "$state" -eq 1 ]; then
@@ -66,12 +36,13 @@ case $1 in
                   -option ctrl:swap_lwin_lctl
         ;;
     -e | --external)
-        setxkbmap -model pc104 \
-                  -layout us \
-                  -variant dvorak-alt-intl \
-                  -option \
-                  -option terminate:ctrl_alt_bksp \
-                  -option compose:rctrl
+            setxkbmap -model pc104 \
+                      -layout us \
+                      -variant dvorak-alt-intl \
+                      -option \
+                      -option terminate:ctrl_alt_bksp \
+                      -option compose:rctrl \
+		      -option ctrl:nocaps
         ;;
     -q | --query)
         setxkbmap -query
@@ -83,7 +54,8 @@ case $1 in
                       -variant dvorak-alt-intl \
                       -option \
                       -option terminate:ctrl_alt_bksp \
-                      -option compose:rctrl
+                      -option compose:rctrl \
+		      -option ctrl:nocaps
         else
             setxkbmap -model chromebook \
                       -layout us \
