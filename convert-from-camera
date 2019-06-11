@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# by date
 
 target_dirs=("MP_ROOT/101PNV01 PRIVATE/AVCHD/BDMV/STREAM")
 
@@ -14,22 +13,18 @@ get_date () {
 
 for dir in ${target_dirs[@]}; do
     if [[ -d "$dir" ]]; then
-        for date in $(stat -c %y $dir/* | cut -d\  -f1 | uniq); do
+        for date in $(stat -c %y "$dir"/* | cut -d\  -f1 | uniq); do
             [[ ! -d "$date" ]] && mkdir -v -p "$dest_dir/$date"
         done
 
-        for file in "$dir/*"; do
-            folder=$(get_date $file)
-            fname=$(date -r $file +%d-%m-%Y_%H:%M:%S)
-            if [[ -d "$dest_dir/$folder" ]] && [[ ! -a "$dest_dir/$folder/$fname" ]]; then
-                echo "${fname}.mp4" >> "$dest_dir/$folder/$folder.pls"
-                ffmpeg -i "$file" -an "$dest_dir/$folder/${fname}.mp4"
-
-            elif [[ -a "$dest_dir/$folder/$fname" ]]; then
-                # echo "$file already exists at destination";
-                :
+        for file in "$dir"/*; do
+            folder=$(get_date "$file")
+            fname=$(date -r "$file" +%d-%m-%Y_%H:%M:%S)
+            if [[ -a "$dest_dir/$folder/${fname}.mp4" ]]; then
+                : # continue
             else
-                echo "$file -- wtf ru doing?!!";
+                ffmpeg -i "$file" -an "$dest_dir/$folder/${fname}.mp4"
+                echo "${fname}.mp4" >> "$dest_dir/$folder/$folder.pls"
             fi
         done
     fi
