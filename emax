@@ -12,9 +12,10 @@ case $1 in
         systemctl --user stop emacs.service
         ;;
     *)
-        emacsclient --alternate-editor=/home/niels/bin/emax -s \
+        emacsclient --alternate-editor="/home/niels/bin/emax -s" \
+                    --socket-name="EMAX" \
                     --create-frame \
                     --no-wait \
-                    --socket-name="EMAX" "$@"
+                    "$@"
         ;;
 esac

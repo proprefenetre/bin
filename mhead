@@ -1,13 +1,13 @@
 #!/bin/bash
 
 if [ "$HOSTNAME" = di-huc-knaw ]; then
-    extern=$(xrandr | awk '/HDMI/ {print $1}')
-    ext_status=$(xrandr |  awk '/HDMI/ {print $2}')
-    intern=$(xrandr | awk '/eDP/ {print $1}')
+    extern="DP1"
+    intern="eDP1"
+    ext_status=$(xrandr |  awk '/DP1/ {print $2}')
 else
     extern=$(xrandr | awk '/VGA/ {print $1}')
-    ext_status=$(xrandr |  awk '/VGA/ {print $2}')
     intern=$(xrandr | awk '/LVDS/ {print $1}')
+    ext_status=$(xrandr |  awk '/VGA/ {print $2}')
 fi
 
 usage() {
@@ -26,11 +26,13 @@ fi
 
 use_int () {
     xrandr --output "$intern" --auto --output "$extern" --off
+    bspc monitor "$extern" -r
     bspc monitor "$intern" -d I II III IV V
 }
 
 use_ext () {
     xrandr --output "$extern" --auto --output "$intern" --off
+    bspc monitor "$intern" -r
     bspc monitor "$extern" -d I II III IV V
 }
 
@@ -48,9 +50,9 @@ use_default() {
         fi
 }
 
-if [[ $# -lt 1 ]]; then
-    $(use_default)
-fi
+# if [[ $# -lt 1 ]]; then
+#     $(use_default)
+# fi
 
 case $1 in
     -t | --test )

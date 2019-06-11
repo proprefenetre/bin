@@ -12,7 +12,7 @@ while :; do
     fi
 
     IFACE=$(ip route | grep -Po "dev \K[[:alnum:]]+" | head -n 1)
-    if [[ "$IFACE" == "wlp3s0" ]]; then
+    if [[ "$IFACE" == "wlp2s0" ]]; then
         wlan_ssid="$(iw $IFACE link | grep -i 'ssid' | cut -d ' ' -f2-)"
         if [[ -n "$wlan_ssid" ]]; then
             IFACE="$wlan_ssid"
@@ -21,14 +21,14 @@ while :; do
         fi
     fi
 
-    if [[ $HOSTNAME = "PFN" ]]; then
-        SOUND=$(amixer | awk '/Mono: .*/{print $4, $NF}' | head -n 1 | tr -d '[]')
-        VOL=${SOUND% *}
-        MUTED=${SOUND#* }
+    SOUND=$(amixer | awk '/Mono: .*/{print $4, $NF}' | head -n 1 | tr -d ' []')
+    VOL=${SOUND% *}
+    MUTED=${SOUND#* }
+    if [[ "$HOSTNAME" = PFN ]]; then
         LINE="S $MUTED ($VOL) | $IFACE | $CHARGE% | $DATETIME "
     else
-        LINE="S $IFACE | $CHARGE% | $DATETIME "
-    fi 
+        LINE="S $MUTED | $IFACE | $CHARGE | $DATETIME "
+    fi
 
     echo $LINE
     sleep 1
