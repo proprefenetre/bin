@@ -13,64 +13,119 @@ from urllib.request import urlopen
 from urllib.error import HTTPError
 
 
-class Lemma:
+WNT_URL = "http://wnt.inl.nl/iWDB/search?"
+WNT_ARTICLE_URL = "http://wnt.inl.nl/iWDB/search?"
 
-    WNT_URL = "http://gtb.ivdnt.org/iWDB/search?actie=results&conc=true&xmlerror=true&lemmodern={}&domein=0&conc=true&wdb=wnt&sensitive=false"
 
-    def __init__(self, word):
-        self.word = word
+result_params = {"actie": "article", "wdb": "wnt", "id": None}
 
-    def _query(self):
-        return urlopen(self.WNT_URL.format(up.quote(self.word)))
 
-    def search(self):
-        results = []
-        soup = BeautifulSoup(self._query(), "lxml")
+def _make_url(base, params):
+    return base + up.urlencode(list(params.items()))
+
+
+def query(lemma, debug=False):
+
+    params = {
+        "actie": "results",
+        "conc": "true",
+        "xmlerror": "true",
+        "domein": "0",
+        "conc": "true",
+        "sensitive": "false",
+        "wdb": "wnt",
+    }
+    params["lemma"] = lemma
+
+    if debug:
+        print(_make_url(WNT_URL, params))
+
+    return urlopen(_make_url(WNT_URL, params))
+
+
+def expand_query(lemma, debug=False):
+    expansions = {"k": "c",
+                  "^c": "k",}
+    queries = []
+    for k, v in expansions.items():
+        queries.append(query(re.sub(rf"{k}", rf"{v}", lemma), debug))
+        
+    return queries
+
+def results(expanded_queries, params=result_params):
+    results = []
+    subentries = []
+    for query in expanded_queries:
+        soup = BeautifulSoup(query, "lxml")
         for r in soup.find_all("result"):
-            attrs = r.attrs
-            if "subentry" in attrs:
-                continue
+            params["id"] = r.attrs["id"]
+            link = _make_url(WNT_ARTICLE_URL, params)
+            if "subentry" in r.attrs:
+                subentries.append(
+                    (
+                        re.search(r"\[.*?([A-Z\s]+)\]", r.attrs["betekenis"])
+                        .group(1)
+                        .strip(),
+                        link,
+                    )
+                )
             else:
-                try:
-                    ws, g = attrs["woordsoort"].split("(")
-                except:
-                    continue
-                # results.append((attrs["lemma"].lower(), re.sub('<[^<]+?>', '', attrs["betekenis"]).strip(), ws, g.strip(")")))
-                results.append((attrs["lemma"].lower(), attrs["betekenis"], ws, g.strip(")")))
-        return results
+                results.append(
+                    (
+                        (r.attrs["lemma"], r.attrs["woordsoort"]),
+                        BeautifulSoup(r.attrs["betekenis"], "lxml").text,
+                        link,
+                    )
+                )
+
+    return results, subentries
 
 
-def printr(results):
-    for r in results:
-        print(f"\033[1m{r[0]}\033[0m: {r[2]}, {r[3]}\n")
+def result_printer(results):
+    cols, _ = get_terminal_size()
+    res, subs = results
+    for r in res:
+        lemma = f"{r[0][0]}\n{r[0][1]}"
+        print(f"{lemma}\n\n{tw.fill(r[1], cols)}\n\n{tw.fill(r[2], cols)}\n")
+    if subs:
+        print("Zie ook:")
+        for s in subs:
+            print(tw.fill(f"{s[0]} ({s[1]})", cols))
 
 
 def interact():
 
     while True:
         try:
-            query = input("> ")
+            lemma = input("> ")
         except (EOFError, KeyboardInterrupt):
             print("Closing session")
             sys.exit(0)
         else:
-            printr(Lemma(query).search())
+            q = expand_query(lemma)
+            result_printer(results(q))
 
 
 def run():
     parser = argparse.ArgumentParser(description="Look up words in WNT")
-    parser.add_argument("word", metavar="WORD", type=str, nargs='*')
-    parser.add_argument("-i", "--interactive", action="store_true", help="run \ interactively")
+    parser.add_argument("word", metavar="WORD", type=str, nargs="*")
+    parser.add_argument(
+        "-i", "--interactive", action="store_true", help="run interactively"
+    )
+    parser.add_argument(
+        "-d", "--debug", action="store_true", help="print generated url"
+    )
 
-    args = vars(parser.parse_args()) # returns a dictionary
+    args = vars(parser.parse_args())
 
-    if args['interactive']:
+    if args["interactive"]:
         interact()
-    elif not args['word']:
+    elif not args["word"]:
         parser.print_help()
         return
     else:
-        printr(Lemma(args['word'][0]).search())
+        q = expand_query(args["word"][0], debug=args["debug"])
+        result_printer(results(q))
 
 
 if __name__ == "__main__":
