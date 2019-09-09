@@ -1,14 +1,7 @@
 #!/bin/bash
 
-if [ "$HOSTNAME" = di-huc-knaw ]; then
-    extern="DP1"
-    intern="eDP1"
-    ext_status=$(xrandr |  awk '/DP1/ {print $2}')
-else
-    extern=$(xrandr | awk '/VGA/ {print $1}')
-    intern=$(xrandr | awk '/LVDS/ {print $1}')
-    ext_status=$(xrandr |  awk '/VGA/ {print $2}')
-fi
+extern="DP1"
+intern="eDP1"
 
 usage() {
     echo "usage:"
