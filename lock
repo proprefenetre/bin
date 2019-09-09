@@ -3,9 +3,6 @@
 tmpdir="/run/user/$UID"
 lock_icon="$HOME/files/pics/lock_round-red.png"
 image="$tmpdir/bg.png"
-# current_bg="$(cat tmpdir/cur_bg)"
-kb_id=$(xinput list | grep "AT Translated Set 2 keyboard" | awk '{print $7}' | awk -F'=' '{print $2}')
-kb_state=$(xinput list-props $kb_id | grep "Device Enabled" | awk '{print $NF}')
 
 scrot "$image"
 
@@ -13,27 +10,6 @@ convert "$image" -scale 10% \
     -scale 1000% \
     -fill black \
     -colorize 25% "$image"
-#
-[[ -f "$lock_icon" ]] && convert "$image" "$lock_icon" \
-    -gravity center \
-    -composite "$image"
-
-# gm convert -gravity south \
-#     -pointsize 14 \
-#     -font /usr/share/fonts/TTF/DejaVuSans.ttf \
-#     -fill white \
-#     -draw "text 0,70 '$(date '+%d/%m/%y')'" \
-#     "$image" "$image"
-
-[[ $kb_state -eq 0 ]] && gm convert -gravity south \
-    -pointsize 14 \
-    -font /usr/share/fonts/TTF/DejaVuSans.ttf \
-    -fill white \
-    -draw "text 0,50 '[keyboard is OFF]'" \
-    "$image" "$image"
 
 i3lock -ui "$image" 
-# hsetroot -fill "$(shuf -n 1 -e $HOME/files/pics/wallpaper/*)"
-/home/niels/bin/setbg
 rm "$image"
-
