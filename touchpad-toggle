@@ -1,14 +1,14 @@
 #!/bin/sh
 
-# It is more robust to disable it by name than by ID number. The devices may be renumbered.
-NAME="ETPS/2 Elantech Touchpad"
-id=$(xinput | rg -i ".*elantech.*id=([0-9]+).*" -r '$1')
-state=$(xinput list-props "$NAME"|grep "Device Enabled"|awk '{print $4}')
+for dev in $(xinput | rg -i ".*touchpad.*id=([0-9]+).*" -r '$1'); do
+    state=$(xinput list-props "$dev" | grep "Device Enabled" | awk '{print $4}')
+    # echo "$dev: $state"
+    if [ "$state" -eq 1 ] ; then
+        xinput disable "$dev"
+        notify-send -a "" "Touchpad" "Disabled"
+    else
+        xinput enable "$dev"
+        notify-send -a "" "Touchpad" "Enabled"	 
+    fi
+done
 
-if [ "$state" -eq 1 ] ; then
-    xinput disable "$id"
-    notify-send -a "" "Touchpad" "Disabled"
-else
-    xinput enable "$id"
-    notify-send -a "" "Touchpad" "Enabled"	 
-fi
