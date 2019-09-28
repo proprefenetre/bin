@@ -3,17 +3,19 @@
 
 case $1 in
     -r|--restart)
+        notify-send -a "Emax" "restarting"
         systemctl --user restart emacs.service
         ;;
     -s|--start)
+        notify-send -a "Emax" "starting"
         systemctl --user start emacs.service
         ;;
     -q|--quit)
+        notify-send -a "Emax" "stopping"
         systemctl --user stop emacs.service
         ;;
     *)
-        emacsclient --alternate-editor="/home/niels/bin/emax -s" \
-                    --socket-name="EMAX" \
+        emacsclient --socket-name="EMAX" \
                     --create-frame \
                     --no-wait \
                     "$@"
