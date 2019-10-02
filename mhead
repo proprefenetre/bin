@@ -1,7 +1,7 @@
 #!/bin/bash
 
 extern="DP1"
-intern="eDP1"
+intern=$(xrandr | rg -o "([\w0-9]+) connected primary" -r '$1')
 
 usage() {
     echo "usage:"
