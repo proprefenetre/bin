@@ -1,5 +1,4 @@
 #! /usr/bin/env bash
-# use one emacsclient frame
 
 case $1 in
     -r|--restart)
@@ -14,10 +13,13 @@ case $1 in
         notify-send -a "Emax" "stopping"
         systemctl --user stop emacs.service
         ;;
+    --status)
+        systemctl --user status emacs.service
+        ;;
     *)
         emacsclient --socket-name="EMAX" \
                     --create-frame \
                     --no-wait \
                     "$@"
-        ;;
+          ;;
 esac
