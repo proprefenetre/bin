@@ -3,9 +3,8 @@
 variant=$(setxkbmap -query | rg "variant:\s+(\w+)" -r '$1')
 
 keyboard-mode () {
-    setxkbmap -model pc104 \
-              -layout us \
-              -variant alt-intl \
+    setxkbmap -layout us \
+              -variant altgr-intl \
               -option \
               -option terminate:ctrl_alt_bksp \
               -option ctrl:nocaps
@@ -14,8 +13,7 @@ keyboard-mode () {
 }
 
 laptop-mode () {
-    setxkbmap -model pc104 \
-              -layout us \
+    setxkbmap -layout us \
               -variant dvorak-alt-intl \
               -option \
               -option terminate:ctrl_alt_bksp \
