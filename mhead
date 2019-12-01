@@ -1,7 +1,7 @@
 #!/bin/bash
 
-extern="DP1"
 intern=$(xrandr | rg -o "([\w0-9]+) connected primary" -r '$1')
+extern="HDMI1"
 
 usage() {
     echo "usage:"
@@ -31,8 +31,8 @@ use_ext () {
 
 use_both () {
     xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
-    bspc monitor "$extern" -d I II III IV V
-    bspc monitor "$intern" -d VI VII VIII IX X
+    bspc monitor "$intern" -d 1 2 3 4 5
+    bspc monitor "$extern" -d 6 7 8 9 0
 }
 
 use_default() {
@@ -69,7 +69,7 @@ case $1 in
         if [[ $(xrandr | grep "$extern disconnected") ]]; then
             $(use_int)
         else
-            loc=$(< $_loc_file)
+            loc=$(< $ext_loc_file)
             if [ "$loc" = left ]; then
                 xrandr --output "$intern" --auto --output "$extern" --auto --right-of "$intern"
                 echo "right" > "$ext_loc_file"
@@ -77,8 +77,11 @@ case $1 in
                 xrandr --output "$intern" --auto --output "$extern" --auto --left-of "$intern"
                 echo "left" > "$ext_loc_file"
             fi
-            bspc monitor "$extern" -S "$intern"
+            bspc monitor "$extern" -s "$intern"
         fi
+        ;;
+    -m | --mirror)
+        xrandr --output "$extern" --same-as "$intern"
         ;;
     -h | --help )
         usage
