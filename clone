@@ -7,23 +7,40 @@ usage() {
     echo "-gh       github"
     echo "-gl       gitlab"
     echo "-a        aur"
-    echo "-bb       bitbucket"
+    echo "--ssh     use ssh (default https)"
     echo
+    exit 1
 }
 
-[[ "$#" < 0 ]] && usage
+[[ "$#" -lt 1 ]] && usage
 
-case $3 in
-    --ssh ) url=git@git
-            delim=: ;;
-    *) url=https://git
-        delim=/ ;;
-esac
+delim="/"
 
-case $1 in
-    -gh ) git clone ${url}hub.com${delim}$2 ;;
-    -gl ) git clone ${url}lab.com${delim}$2 ;;
-    -a ) git clone https://aur.archlinux.org/$2 ;;
-    -bb ) git clone https://bitbucket.org/$2 ;;
-    *) usage
-esac
+while (( "$#" )); do
+
+    case $1 in
+        -gh )
+            url="https://www.github.com"
+            platform="hub"
+            ;;
+        -gl )
+            url="https://www.gitlab.com"
+            platform="lab"
+            ;;
+        --ssh )
+            url="git@git${platform}.com"
+            delim=":" ;;
+        -a )
+            url="https://aur.archlinux.org"
+            delim="/"
+            ;;
+        * )
+            repo="$1"
+            ;;
+    esac
+
+    shift
+
+done
+
+git clone "${url}${delim}${repo}"
