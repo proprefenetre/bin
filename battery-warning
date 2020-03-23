@@ -3,13 +3,15 @@
 BAT=${1:-BAT0}
 
 low=10
+interval=60
 
 while true; do
     state=$(cat /sys/class/power_supply/"$BAT"/status)
     capacity=$(cat /sys/class/power_supply/"$BAT"/capacity)
-    sleep 60s
+    sleep "$interval"s
 
     if [[ "$capacity" -lt "$low" ]]; then
-            notify-send  -u critical -a "Warning" "battery at $capacity%, better find a charger"
+        notify-send  -u critical -a "Warning" "battery at $capacity%, better find a charger"
+        interval=10
     fi
 done

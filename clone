@@ -4,35 +4,34 @@ usage() {
     echo
     echo "$(basename $0) [-gh] [-gl] [-a] [-bb] [--ssh]"
     echo
-    echo "-gh       github"
-    echo "-gl       gitlab"
-    echo "-a        aur"
-    echo "--ssh     use ssh (default https)"
+    echo "-h       github"
+    echo "-l       gitlab"
+    echo "-a       aur"
+    echo "--ssh    use ssh (default https)"
     echo
     exit 1
 }
 
 [[ "$#" -lt 1 ]] && usage
 
-delim="/"
-
 while (( "$#" )); do
 
     case $1 in
-        -gh )
-            url="https://www.github.com"
-            platform="hub"
+        -h )
+            url="https://www.github.com/"
+            # delim="/"
             ;;
-        -gl )
-            url="https://www.gitlab.com"
-            platform="lab"
+        -l )
+            url="https://www.gitlab.com/"
+            # delim="/"
             ;;
         --ssh )
-            url="git@git${platform}.com"
-            delim=":" ;;
+            url="git@git${platform}.com:"
+            # delim=":"
+            ;;
         -a )
-            url="https://aur.archlinux.org"
-            delim="/"
+            url="https://aur.archlinux.org/"
+            # delim="/"
             ;;
         * )
             repo="$1"
@@ -43,4 +42,5 @@ while (( "$#" )); do
 
 done
 
-git clone "${url}${delim}${repo}"
+# git clone "${url}${delim}${repo}"
+git clone "${url}${repo}"

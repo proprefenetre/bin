@@ -52,4 +52,8 @@ case "$1" in
     -n | --custom ) 
         winmove $1 $2
         ;;
+    -s | --show )
+        echo "x: $windowx"
+        echo "y: $windowy"
+        ;;
 esac

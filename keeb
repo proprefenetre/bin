@@ -2,7 +2,7 @@
 
 variant=$(setxkbmap -query | rg "variant:\s+(\w+)" -r '$1')
 
-keyboard-mode () {
+qwerty-mode () {
     setxkbmap -layout us \
               -variant altgr-intl \
               -option \
@@ -12,7 +12,7 @@ keyboard-mode () {
     notify-send -a "keyboard" "alt-intl"
 }
 
-laptop-mode () {
+dvorak-mode () {
     setxkbmap -layout us \
               -variant dvorak-alt-intl \
               -option \
@@ -24,18 +24,18 @@ laptop-mode () {
 
 case $1 in
     -q | --qwerty)
-        keyboard-mode
+        qwerty-mode
         ;;
 
     -d | --dvorak)
-        laptop-mode
+        dvorak-mode
         ;;
 
     -t | --toggle)
         if [[ "$variant" = "dvorak-alt-intl" ]]; then
-            keyboard-mode
+            qwerty-mode
         else
-            laptop-mode
+            dvorak-mode
         fi
         ;;
 
