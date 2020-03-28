@@ -11,7 +11,11 @@ while true; do
     sleep "$interval"s
 
     if [[ "$capacity" -lt "$low" ]]; then
-        notify-send  -u critical -a "Warning" "battery at $capacity%, better find a charger"
-        interval=10
+        if [[ "$state" -eq "Discharging" ]]; then
+            notify-send  -u critical -a "Warning" "battery at $capacity%, better find a charger"
+            interval=10
+        else
+            interval=60
+        fi
     fi
 done
