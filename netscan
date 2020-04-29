@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# strict mode:
-set -e -u
-
 subnet=192.168.1.1/24
 
 echo connected:

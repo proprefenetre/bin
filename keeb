@@ -41,6 +41,8 @@ case $1 in
 
     *)
         xmodmap ~/.Xmodmap
+        echo "variant: $variant"
+        setxkbmap -query
         ;;
 
     -p | --print)

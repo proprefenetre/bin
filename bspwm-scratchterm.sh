@@ -3,7 +3,8 @@
 id=$(xdotool search --classname scratchterm)
 
 if [ -z "$id" ]; then
-    urxvt -name scratchterm
+    # urxvt -name scratchterm
+    kitty --name scratchterm
     id=$(xdotool search --classname scratchterm)
 fi
 
