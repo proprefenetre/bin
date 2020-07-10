@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# polybar
+export MONITOR=$(xrandr | rg "(.*) connected primary .*$" -r '$1')
+
 # Terminate already running bar instances
 killall -q polybar
 
